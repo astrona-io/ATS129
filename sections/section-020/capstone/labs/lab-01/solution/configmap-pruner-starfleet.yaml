@@ -1,0 +1,13 @@
+# Reference namespace configuration for starfleet: delete every finished
+# TaskRun and PipelineRun 60 seconds after it ends.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tekton-pruner-namespace-spec
+  namespace: starfleet
+  labels:
+    app.kubernetes.io/part-of: tekton-pruner
+    pruner.tekton.dev/config-type: namespace
+data:
+  ns-config: |
+    ttlSecondsAfterFinished: 60

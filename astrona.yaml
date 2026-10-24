@@ -1,0 +1,280 @@
+# Course manifest for ATS129 - Supply Chain Security With Chains & Operations (Tekton).
+#
+# One entry per section under `modules:`. Each section lists, in order: its
+# README, then for each module the landing page (course.md), its parts
+# (course-0N-*.md), and right after the part a lab tests, the lab's
+# question.md reading and the `type: lab` entry. The module's summary page
+# comes last. The section capstone closes the section. Playgrounds are not
+# listed: the landing page's playground marker shows them. solution.md is
+# never listed.
+#
+# Every `path:` is relative to this file.
+
+training:
+  id: ATS129
+  title: "Tekton: Supply Chain Security With Chains & Operations"
+  maturity: draft
+  description: >
+    Training material covering the Supply Chain Security With Chains &
+    Operations domain of the Tekton training path: Tekton Chains for signed
+    SLSA provenance (signing-secrets, chains-config formats, storage and
+    signers, type hinting with IMAGE_URL and IMAGE_DIGEST, signatures and
+    attestations in an OCI registry, verification with cosign, keyless
+    signing with Fulcio and the Rekor transparency log), the Tekton Operator
+    for installing, configuring and upgrading Tekton, the Tekton Pruner for
+    history-based and time-based cleanup of TaskRuns and PipelineRuns with
+    namespace-level rules, and monitoring the Tekton controller with
+    Prometheus metrics and alerting rules. Each module pairs a layered reader
+    with an ungraded hands-on playground and a graded practice lab. Each
+    section closes with an integration capstone. Written for Tekton Pipelines
+    v1.17.1, Tekton Chains v0.29.9, the Tekton Pruner v0.4.4, the Tekton
+    Operator v0.81.2, tkn v0.46.2 and cosign 3.1.4.
+
+  certification:
+    name: Tekton
+    code: TEKTON
+    provider: Astrona
+    domain: "Supply Chain Security With Chains & Operations"
+    weight: 15
+
+modules:
+
+  - id: module-intro
+    title: "Introduction"
+    description: >
+      Start here. What this course trains you to do, how it is laid out, how
+      to get your machine ready with the astrona command-line tool, how the
+      content is written and checked, who maintains it, and how to report a
+      mistake.
+
+    content:
+      - type: reading
+        title: Introduction
+        path: sections/intro/README.md
+      - type: reading
+        title: "Welcome To The Course"
+        path: sections/intro/course-01-welcome.md
+      - type: reading
+        title: "Get Your Machine Ready"
+        path: sections/intro/course-02-get-your-machine-ready.md
+      - type: reading
+        title: "How This Course Is Made"
+        path: sections/intro/course-03-how-this-course-is-made.md
+
+  - id: module-010
+    title: "Sign And Attest Builds With Tekton Chains"
+    description: >
+      How Tekton Chains formats, signs and stores provenance for finished
+      runs, the cosign key in signing-secrets, chains-config formats, storage
+      and signers, type hinting with IMAGE_URL and IMAGE_DIGEST, signatures
+      and SLSA attestations in an OCI registry verified with cosign, keyless
+      signing with Fulcio, the Rekor transparency log, and the failures that
+      leave a run marked as signed with nothing behind it.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-010/README.md
+
+      - type: reading
+        title: "Signed Provenance With Tekton Chains"
+        path: sections/section-010/module-01/course.md
+      - type: reading
+        title: "How Tekton Chains Works"
+        path: sections/section-010/module-01/course-01-how-chains-works.md
+      - type: reading
+        title: "Sign Images And Store Attestations In A Registry"
+        path: sections/section-010/module-01/course-02-sign-images-and-store-attestations.md
+      - type: reading
+        title: "Keyless Signing, Transparency Logs And Quiet Failures"
+        path: sections/section-010/module-01/course-03-keyless-signing-and-failures.md
+      - type: reading
+        title: Question
+        path: sections/section-010/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Sign Built Images With Tekton Chains Lab"
+        path: sections/section-010/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 30m
+        topic: supply-chain-security
+        task_kind: build
+        tags: [chains, signing-secrets, chains-config, type-hinting, slsa-provenance, oci-storage, cosign]
+        learning_goals:
+          - Give Tekton Chains a cosign key pair in signing-secrets
+          - Configure chains-config to push SLSA v1.0 attestations and image signatures to an OCI registry
+          - Prove with cosign that every build of a Task is signed and attested
+        resources:
+          - name: "Chains configuration"
+            url: https://tekton.dev/docs/chains/config/
+          - name: "Signing artifacts with Chains"
+            url: https://tekton.dev/docs/chains/signing/
+          - name: "SLSA provenance and type hinting"
+            url: https://tekton.dev/docs/chains/slsa-provenance/
+      - type: reading
+        title: Summary
+        path: sections/section-010/module-01/course-04-summary.md
+
+      - type: reading
+        title: Question
+        path: sections/section-010/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Repair A Broken Signing Setup Capstone"
+        path: sections/section-010/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 40m
+        topic: supply-chain-security
+        task_kind: troubleshooting
+        tags: [chains, signing-secrets, chains-config, type-hinting, oci-storage, cosign, transparency-log]
+        learning_goals:
+          - Find why Chains signs nothing from its log, its annotations and the registry, one fault after the other
+          - Repair a key password, a malformed digest result and a plain-HTTP registry without replacing the release key
+          - Prove the release with cosign against the release public key
+        resources:
+          - name: "Chains configuration"
+            url: https://tekton.dev/docs/chains/config/
+          - name: "Signing artifacts with Chains"
+            url: https://tekton.dev/docs/chains/signing/
+          - name: "Chains and Sigstore"
+            url: https://tekton.dev/docs/chains/sigstore/
+
+  - id: module-020
+    title: "Operate Tekton With The Operator And The Pruner"
+    description: >
+      Installing, configuring and upgrading Tekton with the Tekton Operator
+      and a TektonConfig, the job-based and the event-based pruner,
+      history-based pruning with successfulHistoryLimit, failedHistoryLimit
+      and historyLimit, time-based pruning with ttlSecondsAfterFinished, and
+      namespace rules with enforcedConfigLevel and tekton-pruner-namespace-spec.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-020/README.md
+
+      - type: reading
+        title: "Manage Tekton With The Operator And The Pruner"
+        path: sections/section-020/module-01/course.md
+      - type: reading
+        title: "Install And Configure Tekton With The Operator"
+        path: sections/section-020/module-01/course-01-install-tekton-with-the-operator.md
+      - type: reading
+        title: "Keep A Fixed Number Of Runs With History Limits"
+        path: sections/section-020/module-01/course-02-history-based-pruning.md
+      - type: reading
+        title: "Delete Old Runs With TTLs And Namespace Settings"
+        path: sections/section-020/module-01/course-03-time-based-pruning-and-namespaces.md
+      - type: reading
+        title: Question
+        path: sections/section-020/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Configure Time-Based And History-Based Pruning Lab"
+        path: sections/section-020/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 25m
+        topic: operations
+        task_kind: build
+        tags: [pruner, ttl-pruning, history-pruning, namespace-pruning-config, pruner-webhook]
+        learning_goals:
+          - Allow namespace-level pruning rules in the global Pruner configuration
+          - Delete one namespace's runs 60 seconds after they finish
+          - Keep a fixed number of successful and failed runs in another namespace
+        resources:
+          - name: "Tekton Pruner"
+            url: https://tekton.dev/docs/pruner/
+          - name: "TektonPruner in the Operator"
+            url: https://tekton.dev/docs/operator/tektonpruner/
+      - type: reading
+        title: Summary
+        path: sections/section-020/module-01/course-04-summary.md
+
+      - type: reading
+        title: Question
+        path: sections/section-020/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Repair Run Cleanup Capstone"
+        path: sections/section-020/capstone/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 30m
+        topic: operations
+        task_kind: troubleshooting
+        tags: [pruner, pruner-webhook, ttl-pruning, namespace-pruning-config, history-pruning]
+        learning_goals:
+          - Find why the API server refuses changes to the Pruner configuration and bring the webhook back
+          - Find why the Pruner ignores a namespace's rules and fix the configuration level and the ConfigMap name
+          - Prove that one namespace's runs expire while another namespace keeps its runs
+        resources:
+          - name: "Tekton Pruner"
+            url: https://tekton.dev/docs/pruner/
+          - name: "TektonPruner in the Operator"
+            url: https://tekton.dev/docs/operator/tektonpruner/
+          - name: "TektonConfig"
+            url: https://tekton.dev/docs/operator/tektonconfig/
+
+  - id: module-030
+    title: "Monitor Tekton With Prometheus"
+    description: >
+      The metrics of the Tekton Pipelines controller and config-observability,
+      scraping the controller with Prometheus, PromQL queries for failures,
+      load and duration, and alerting rules that fire when TaskRuns fail.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-030/README.md
+
+      - type: reading
+        title: "Monitor Tekton With Prometheus"
+        path: sections/section-030/module-01/course.md
+      - type: reading
+        title: "The Metrics Tekton Exposes"
+        path: sections/section-030/module-01/course-01-the-metrics-tekton-exposes.md
+      - type: reading
+        title: "Scrape Tekton With Prometheus"
+        path: sections/section-030/module-01/course-02-scrape-tekton-with-prometheus.md
+      - type: reading
+        title: "Alert On Failed TaskRuns"
+        path: sections/section-030/module-01/course-03-alert-on-failed-taskruns.md
+      - type: reading
+        title: Question
+        path: sections/section-030/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Scrape Tekton And Alert On Failed TaskRuns Lab"
+        path: sections/section-030/module-01/labs/lab-01
+        difficulty: beginner
+        estimated_duration: 25m
+        topic: monitoring
+        task_kind: build
+        tags: [prometheus, metrics, scrape-config, alerting-rules, promql]
+        learning_goals:
+          - Add a Prometheus scrape job for the metrics port of the Tekton Pipelines controller
+          - Write an alerting rule on tekton_pipelines_controller_taskrun_total for failed runs
+          - Prove the alert with a failed TaskRun
+        resources:
+          - name: "Pipeline controller metrics"
+            url: https://tekton.dev/docs/pipelines/metrics/
+          - name: "Additional configuration options"
+            url: https://tekton.dev/docs/pipelines/additional-configs/
+      - type: reading
+        title: Summary
+        path: sections/section-030/module-01/course-04-summary.md
+
+      - type: reading
+        title: Question
+        path: sections/section-030/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Repair Tekton Monitoring Capstone"
+        path: sections/section-030/capstone/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 30m
+        topic: monitoring
+        task_kind: troubleshooting
+        tags: [config-observability, metrics, prometheus, scrape-config, alerting-rules, promql]
+        learning_goals:
+          - Find why Prometheus has no Tekton metrics, on the Tekton side and on the Prometheus side
+          - Fix an alert whose label selector can never match
+          - Prove the repair with a failed TaskRun that fires the alert
+        resources:
+          - name: "Pipeline controller metrics"
+            url: https://tekton.dev/docs/pipelines/metrics/
+          - name: "Additional configuration options"
+            url: https://tekton.dev/docs/pipelines/additional-configs/

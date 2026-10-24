@@ -1,0 +1,29 @@
+# Lets the workstation pod read and write the Chains signing Secret, so
+# `cosign generate-key-pair k8s://tekton-chains/signing-secrets` and
+# `cosign verify --key k8s://tekton-chains/signing-secrets` work from inside
+# it. Applied after Tekton Chains, because the namespace tekton-chains comes
+# with the Chains release. Lab-only: a real cluster gives this right to very
+# few people.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: workstation-signing-secrets
+  namespace: tekton-chains
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: workstation-signing-secrets
+  namespace: tekton-chains
+subjects:
+  - kind: ServiceAccount
+    name: workstation
+    namespace: workstation
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: workstation-signing-secrets

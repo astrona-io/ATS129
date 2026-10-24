@@ -1,0 +1,60 @@
+# Configure Time-Based And History-Based Pruning
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-129-lab-020-01"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-tekton"
+      description: "Installs the tkn CLI 0.46.2, Tekton Pipelines v1.17.1 and the Tekton Pruner v0.4.4, and waits until both webhooks answer"
+      type: "file"
+      source: "bootstrap/01-install-tekton.sh"
+    - name: "ats-129-lab-020-01-setup"
+      description: "Applies the Task nightly-check in starfleet and outpost and runs it three times in each"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+  manifests:
+    - name: "lab-start"
+      description: "The namespaces starfleet and outpost"
+      type: "file"
+      source: "manifests/lab-start.yaml"
+testing:
+  init:
+    - name: "wait-for-tekton"
+      description: "Waits until every Tekton and Pruner Deployment is ready"
+      type: "file"
+      source: "testing/wait-for-tekton.sh"
+    - name: "reference-solution"
+      description: "The configuration a correct learner makes; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-global-config"
+      description: "Confirms the global Pruner configuration allows namespace settings and keeps historyLimit 100"
+      type: "file"
+      source: "validation/validate-global-config.sh"
+    - name: "validate-namespace-configs"
+      description: "Confirms the namespace ConfigMaps of starfleet and outpost have the right name, labels and settings"
+      type: "file"
+      source: "validation/validate-namespace-configs.sh"
+    - name: "validate-starfleet-ttl"
+      description: "Runs nightly-check in starfleet and confirms the Pruner deletes it about 60 seconds after it ends"
+      type: "file"
+      source: "validation/validate-starfleet-ttl.sh"
+    - name: "validate-outpost-history"
+      description: "Runs nightly-check seven times in outpost and confirms only 3 successful and 2 failed runs remain"
+      type: "file"
+      source: "validation/validate-outpost-history.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - busybox:1.37.0

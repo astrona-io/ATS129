@@ -1,0 +1,14 @@
+# Reference global Pruner configuration: namespace-level settings are
+# allowed, and the cluster-wide default of 100 runs per status stays.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tekton-pruner-default-spec
+  namespace: tekton-pipelines
+  labels:
+    app.kubernetes.io/part-of: tekton-pruner
+    pruner.tekton.dev/config-type: global
+data:
+  global-config: |
+    enforcedConfigLevel: namespace
+    historyLimit: 100

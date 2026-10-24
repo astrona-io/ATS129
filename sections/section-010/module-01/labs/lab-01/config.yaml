@@ -1,0 +1,63 @@
+# Sign Built Images With Tekton Chains
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-129-lab-010-01"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-tekton"
+      description: "Installs the tkn CLI 0.46.2, Tekton Pipelines v1.17.1 and Tekton Chains v0.29.9, and starts the registry and the workstation"
+      type: "file"
+      source: "bootstrap/01-install-tekton.sh"
+    - name: "ats-129-lab-010-01-setup"
+      description: "Applies the Task build-image and the TaskRun build-bridge, and waits until Chains has handled the run"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+  manifests:
+    - name: "lab-start"
+      description: "The namespace starfleet, the registry and the workstation pod"
+      type: "file"
+      source: "manifests/lab-start.yaml"
+testing:
+  init:
+    - name: "wait-for-tekton"
+      description: "Waits until Tekton, the registry and the workstation are ready"
+      type: "file"
+      source: "testing/wait-for-tekton.sh"
+    - name: "reference-solution"
+      description: "The setup a correct learner makes; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-signing-key"
+      description: "Confirms signing-secrets holds an encrypted cosign key pair and its password"
+      type: "file"
+      source: "validation/validate-signing-key.sh"
+    - name: "validate-chains-config"
+      description: "Confirms chains-config stores SLSA v1.0 attestations and signatures in the registry without a transparency log"
+      type: "file"
+      source: "validation/validate-chains-config.sh"
+    - name: "validate-build-bridge"
+      description: "Confirms build-bridge succeeded, was signed, and its signature and provenance verify with cosign"
+      type: "file"
+      source: "validation/validate-build-bridge.sh"
+    - name: "validate-grader-build"
+      description: "Runs build-image once more and confirms the new image is signed and attested"
+      type: "file"
+      source: "validation/validate-grader-build.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - busybox:1.37.0
+      - alpine:3.22
+      - registry:3.1.2
+      - ghcr.io/regclient/regctl:v0.11.7-alpine

@@ -1,0 +1,38 @@
+# The Task the lab starts with. It builds a small image from scratch with
+# regctl and pushes it to the in-cluster registry. It has a fault: its
+# results are named "url" and "digest", so Tekton Chains cannot tell which
+# image the TaskRun built. Fixing the results is part of the task.
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: build-image
+  namespace: starfleet
+spec:
+  params:
+    - name: image
+      type: string
+      description: Repository of the image, without a tag (registry.localtest.me:5001/starfleet/<name>)
+    - name: tag
+      type: string
+      description: Tag to push
+      default: "1.0.0"
+  results:
+    - name: url
+      description: The image that was pushed, with its tag
+    - name: digest
+      description: The digest of the pushed image
+  steps:
+    - name: build-and-push
+      image: ghcr.io/regclient/regctl:v0.11.7-alpine
+      script: |
+        #!/bin/sh
+        set -eu
+        registry="$(echo "$(params.image)" | cut -d/ -f1)"
+        # The lab registry speaks plain HTTP, so tell regctl not to use TLS.
+        regctl --host "reg=${registry},tls=disabled" image create "$(params.image):$(params.tag)" \
+          --label "org.opencontainers.image.version=$(params.tag)" \
+          --label "dev.tekton.taskrun=$(context.taskRun.name)"
+        digest="$(regctl --host "reg=${registry},tls=disabled" image digest "$(params.image):$(params.tag)")"
+        printf '%s' "$(params.image):$(params.tag)" | tee "$(results.url.path)"
+        echo
+        printf '%s' "$digest" | tee "$(results.digest.path)"

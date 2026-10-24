@@ -1,0 +1,15 @@
+# The starfleet team's pruning settings, as the capstone starts. It has a
+# fault: the Pruner reads only a ConfigMap named tekton-pruner-namespace-spec,
+# so it never sees this one. The label pruner.tekton.dev/config-type is
+# missing too, so the Pruner webhook never validated it. Fixing it is part of
+# the task.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tekton-pruner-namespace-config
+  namespace: starfleet
+  labels:
+    app.kubernetes.io/part-of: tekton-pruner
+data:
+  ns-config: |
+    ttlSecondsAfterFinished: 60

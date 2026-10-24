@@ -1,0 +1,14 @@
+# Reference chains-config: SLSA v1.0 provenance for TaskRuns, stored as
+# attestations in the OCI registry next to the image, image signatures in the
+# registry, no transparency log, and plain HTTP allowed for the lab registry.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chains-config
+  namespace: tekton-chains
+data:
+  artifacts.taskrun.format: slsa/v2alpha4
+  artifacts.taskrun.storage: oci
+  artifacts.oci.storage: oci
+  transparency.enabled: "false"
+  storage.oci.repository.insecure: "true"

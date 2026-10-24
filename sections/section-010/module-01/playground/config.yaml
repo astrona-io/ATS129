@@ -1,0 +1,29 @@
+# Signed Provenance With Tekton Chains (PLAYGROUND) — Playground environment
+# A clean sandbox: it spins up, runs OS prep, then stays running for free
+# exploration. No task, no grading, no `astrona submit`.
+# Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-129-playground-010-01"
+  docs:
+    guide: "docs/overview.md"
+bootstrap:
+  init:
+    - name: "prepare"
+      description: "Install the tkn CLI 0.46.2, Tekton Pipelines v1.17.1 and Tekton Chains v0.29.9, and start the registry and the workstation pod."
+      type: "file"
+      source: "bootstrap/prepare.sh"
+  manifests:
+    - name: "lab-start"
+      description: "The namespace starfleet, the in-cluster registry and the workstation pod with cosign and regctl."
+      type: "file"
+      source: "manifests/lab-start.yaml"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - busybox:1.37.0
+      - alpine:3.22
+      - registry:3.1.2
+      - ghcr.io/regclient/regctl:v0.11.7-alpine

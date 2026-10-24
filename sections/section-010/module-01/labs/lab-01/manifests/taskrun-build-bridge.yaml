@@ -1,0 +1,16 @@
+# The TaskRun the lab starts with. It succeeds and pushes the image, but
+# Chains has no signing key and the default chains-config, so nothing is
+# signed or stored in the registry.
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  name: build-bridge
+  namespace: starfleet
+spec:
+  taskRef:
+    name: build-image
+  params:
+    - name: image
+      value: registry.localtest.me:5001/starfleet/bridge
+    - name: tag
+      value: "1.0.0"

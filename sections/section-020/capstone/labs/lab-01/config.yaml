@@ -1,0 +1,60 @@
+# Repair Run Cleanup (section 020 capstone)
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-129-capstone-020"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-tekton"
+      description: "Installs the tkn CLI 0.46.2, Tekton Pipelines v1.17.1 and the Tekton Pruner v0.4.4, and waits until both webhooks answer"
+      type: "file"
+      source: "bootstrap/01-install-tekton.sh"
+    - name: "ats-129-capstone-020-setup"
+      description: "Runs nightly-check, stores the starfleet settings under a wrong name, and scales the Pruner webhook to zero"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+  manifests:
+    - name: "lab-start"
+      description: "The namespaces starfleet and outpost"
+      type: "file"
+      source: "manifests/lab-start.yaml"
+testing:
+  init:
+    - name: "wait-for-tekton"
+      description: "Waits until every Tekton and Pruner Deployment that is not scaled to zero is ready"
+      type: "file"
+      source: "testing/wait-for-tekton.sh"
+    - name: "reference-solution"
+      description: "The repair a correct learner makes; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-pruner-webhook"
+      description: "Confirms the Pruner webhook runs and admits changes to the Pruner ConfigMaps"
+      type: "file"
+      source: "validation/validate-pruner-webhook.sh"
+    - name: "validate-pruner-config"
+      description: "Confirms namespace settings are allowed and starfleet has a correct tekton-pruner-namespace-spec"
+      type: "file"
+      source: "validation/validate-pruner-config.sh"
+    - name: "validate-starfleet-ttl"
+      description: "Runs nightly-check in starfleet and confirms the Pruner deletes it about 60 seconds after it ends"
+      type: "file"
+      source: "validation/validate-starfleet-ttl.sh"
+    - name: "validate-outpost-default"
+      description: "Runs nightly-check in outpost and confirms it gets no TTL"
+      type: "file"
+      source: "validation/validate-outpost-default.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - busybox:1.37.0

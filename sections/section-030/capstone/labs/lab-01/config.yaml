@@ -1,0 +1,62 @@
+# Repair Tekton Monitoring (section 030 capstone)
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-129-capstone-030"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-tekton"
+      description: "Installs the tkn CLI 0.46.2 and Tekton Pipelines v1.17.1, and waits for Prometheus and the client pod"
+      type: "file"
+      source: "bootstrap/01-install-tekton.sh"
+    - name: "ats-129-capstone-030-setup"
+      description: "Runs nightly-check once and switches the controller's metrics export off"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+  manifests:
+    - name: "lab-start"
+      description: "The namespaces starfleet and monitoring, Prometheus with a broken Tekton job and rule, and the client pod"
+      type: "file"
+      source: "manifests/lab-start.yaml"
+testing:
+  init:
+    - name: "wait-for-tekton"
+      description: "Waits until Tekton and Prometheus are ready"
+      type: "file"
+      source: "testing/wait-for-tekton.sh"
+    - name: "reference-solution"
+      description: "The repair a correct learner makes; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-controller-metrics"
+      description: "Confirms config-observability exports Prometheus metrics and the controller serves them"
+      type: "file"
+      source: "validation/validate-controller-metrics.sh"
+    - name: "validate-scrape-target"
+      description: "Confirms Prometheus scrapes the job tekton-pipelines-controller and the target is up"
+      type: "file"
+      source: "validation/validate-scrape-target.sh"
+    - name: "validate-alert-rule"
+      description: "Confirms the alerting rule TektonTaskRunFailed uses status=\"failed\" and severity=warning"
+      type: "file"
+      source: "validation/validate-alert-rule.sh"
+    - name: "validate-alert-fires"
+      description: "Runs a failing TaskRun and confirms the alert TektonTaskRunFailed fires"
+      type: "file"
+      source: "validation/validate-alert-fires.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - busybox:1.37.0
+      - prom/prometheus:v3.15.1
+      - nicolaka/netshoot:v0.13

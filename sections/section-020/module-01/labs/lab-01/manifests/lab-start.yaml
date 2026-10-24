@@ -1,0 +1,12 @@
+# Starting namespaces for this ATS129 environment. Every Task and TaskRun of
+# the course runs in starfleet; outpost is a second team namespace with its
+# own pruning needs.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: starfleet
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: outpost

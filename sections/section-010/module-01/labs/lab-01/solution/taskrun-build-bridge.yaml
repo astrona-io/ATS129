@@ -1,0 +1,15 @@
+# Reference end state of the TaskRun: the same values as the starting
+# TaskRun, created again after the fix.
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  name: build-bridge
+  namespace: starfleet
+spec:
+  taskRef:
+    name: build-image
+  params:
+    - name: image
+      value: registry.localtest.me:5001/starfleet/bridge
+    - name: tag
+      value: "1.0.0"

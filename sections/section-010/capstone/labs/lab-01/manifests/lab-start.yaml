@@ -1,0 +1,148 @@
+# Starting state for every ATS129 environment about Tekton Chains:
+#   - the namespace starfleet, where every Task and TaskRun runs,
+#   - an OCI registry (Distribution, plain HTTP, lab-only) that the whole
+#     cluster reaches as registry.localtest.me:5001 (a CoreDNS rewrite set by
+#     the bootstrap script points the name at the Service),
+#   - the workstation pod with cosign 3.1.4, regctl 0.11.7, curl and jq.
+# Port 5001, not 5000: macOS uses 5000 for AirPlay.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: starfleet
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: registry
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry
+  namespace: registry
+  labels:
+    app: registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registry
+  template:
+    metadata:
+      labels:
+        app: registry
+    spec:
+      containers:
+        - name: registry
+          image: registry:3.1.2
+          env:
+            - name: REGISTRY_HTTP_ADDR
+              value: ":5001"
+            # registry 3 runs its debug server on :5001 by default; move it
+            # so it does not clash with the listener above.
+            - name: REGISTRY_HTTP_DEBUG_ADDR
+              value: "127.0.0.1:5002"
+            - name: REGISTRY_STORAGE_DELETE_ENABLED
+              value: "true"
+          ports:
+            - name: http
+              containerPort: 5001
+          readinessProbe:
+            httpGet:
+              path: /v2/
+              port: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry
+  namespace: registry
+spec:
+  selector:
+    app: registry
+  ports:
+    - name: http
+      port: 5001
+      targetPort: http
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: workstation
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: workstation
+  namespace: workstation
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workstation-setup
+  namespace: workstation
+data:
+  install-tools.sh: |
+    #!/bin/sh
+    # Downloads the pinned client tools into /tools (an emptyDir shared with
+    # the main container). Runs once, as an init container.
+    set -eu
+    COSIGN_VERSION=3.1.4
+    REGCTL_VERSION=0.11.7
+    ARCH="$(uname -m)"
+    case "$ARCH" in x86_64) ARCH=amd64 ;; aarch64|arm64) ARCH=arm64 ;; esac
+    wget -q "https://github.com/sigstore/cosign/releases/download/v${COSIGN_VERSION}/cosign-linux-${ARCH}" -O /tools/cosign
+    wget -q "https://github.com/regclient/regclient/releases/download/v${REGCTL_VERSION}/regctl-linux-${ARCH}" -O /tools/regctl
+    chmod 0755 /tools/*
+    ls -l /tools
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workstation
+  namespace: workstation
+  labels:
+    app: workstation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workstation
+  template:
+    metadata:
+      labels:
+        app: workstation
+    spec:
+      serviceAccountName: workstation
+      initContainers:
+        - name: install-tools
+          image: alpine:3.22
+          command: ["sh", "/setup/install-tools.sh"]
+          volumeMounts:
+            - name: tools
+              mountPath: /tools
+            - name: setup
+              mountPath: /setup
+      containers:
+        - name: workstation
+          image: alpine:3.22
+          command: ["sh", "-c", "apk add --no-cache curl jq >/dev/null && /tools/regctl registry set registry.localtest.me:5001 --tls disabled && while true; do sleep 30; done"]
+          env:
+            - name: PATH
+              value: /tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+            - name: REGISTRY
+              value: registry.localtest.me:5001
+          workingDir: /work
+          volumeMounts:
+            - name: tools
+              mountPath: /tools
+            - name: work
+              mountPath: /work
+      volumes:
+        - name: tools
+          emptyDir: {}
+        - name: setup
+          configMap:
+            name: workstation-setup
+        - name: work
+          emptyDir: {}

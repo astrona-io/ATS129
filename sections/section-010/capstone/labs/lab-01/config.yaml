@@ -1,0 +1,63 @@
+# Repair A Broken Signing Setup (section 010 capstone)
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-129-capstone-010"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-tekton"
+      description: "Installs the tkn CLI 0.46.2, Tekton Pipelines v1.17.1 and Tekton Chains v0.29.9, and starts the registry and the workstation"
+      type: "file"
+      source: "bootstrap/01-install-tekton.sh"
+    - name: "ats-129-capstone-010-setup"
+      description: "Stores the release key with a wrong password, configures Chains without insecure registry access, and runs the broken release Task"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+  manifests:
+    - name: "lab-start"
+      description: "The namespace starfleet, the registry and the workstation pod"
+      type: "file"
+      source: "manifests/lab-start.yaml"
+testing:
+  init:
+    - name: "wait-for-tekton"
+      description: "Waits until Tekton, the registry and the workstation are ready"
+      type: "file"
+      source: "testing/wait-for-tekton.sh"
+    - name: "reference-solution"
+      description: "The repair a correct learner makes; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-release-key"
+      description: "Confirms signing-secrets still holds the release key with the password that decrypts it"
+      type: "file"
+      source: "validation/validate-release-key.sh"
+    - name: "validate-chains-config"
+      description: "Confirms chains-config stores SLSA v1.0 attestations and signatures in the plain-HTTP registry without a transparency log"
+      type: "file"
+      source: "validation/validate-chains-config.sh"
+    - name: "validate-release-run"
+      description: "Confirms release-shuttle succeeded and its signature and provenance verify with the release key"
+      type: "file"
+      source: "validation/validate-release-run.sh"
+    - name: "validate-grader-release"
+      description: "Runs release-image once more and confirms the new image is signed and attested with the release key"
+      type: "file"
+      source: "validation/validate-grader-release.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - busybox:1.37.0
+      - alpine:3.22
+      - registry:3.1.2
+      - ghcr.io/regclient/regctl:v0.11.7-alpine

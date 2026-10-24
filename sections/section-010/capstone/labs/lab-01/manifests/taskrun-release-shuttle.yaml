@@ -1,0 +1,15 @@
+# The release TaskRun the capstone starts with. It succeeds, and Chains marks
+# it signed, but nothing is signed or pushed.
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  name: release-shuttle
+  namespace: starfleet
+spec:
+  taskRef:
+    name: release-image
+  params:
+    - name: image
+      value: registry.localtest.me:5001/starfleet/shuttle
+    - name: tag
+      value: "2.0.0"

@@ -1,0 +1,36 @@
+# Reference end state of the release Task: IMAGE_DIGEST keeps the
+# "sha256:" prefix, so Tekton Chains finds the built image.
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: release-image
+  namespace: starfleet
+spec:
+  params:
+    - name: image
+      type: string
+      description: Repository of the image, without a tag (registry.localtest.me:5001/starfleet/<name>)
+    - name: tag
+      type: string
+      description: Tag to push
+      default: "1.0.0"
+  results:
+    - name: IMAGE_URL
+      description: The image that was pushed, with its tag
+    - name: IMAGE_DIGEST
+      description: The digest of the pushed image
+  steps:
+    - name: build-and-push
+      image: ghcr.io/regclient/regctl:v0.11.7-alpine
+      script: |
+        #!/bin/sh
+        set -eu
+        registry="$(echo "$(params.image)" | cut -d/ -f1)"
+        # The lab registry speaks plain HTTP, so tell regctl not to use TLS.
+        regctl --host "reg=${registry},tls=disabled" image create "$(params.image):$(params.tag)" \
+          --label "org.opencontainers.image.version=$(params.tag)" \
+          --label "dev.tekton.taskrun=$(context.taskRun.name)"
+        digest="$(regctl --host "reg=${registry},tls=disabled" image digest "$(params.image):$(params.tag)")"
+        printf '%s' "$(params.image):$(params.tag)" | tee "$(results.IMAGE_URL.path)"
+        echo
+        printf '%s' "$digest" | tee "$(results.IMAGE_DIGEST.path)"

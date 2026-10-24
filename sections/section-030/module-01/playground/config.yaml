@@ -1,0 +1,28 @@
+# Monitor Tekton With Prometheus (PLAYGROUND) — Playground environment
+# A clean sandbox: it spins up, runs OS prep, then stays running for free
+# exploration. No task, no grading, no `astrona submit`.
+# Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-129-playground-030-01"
+  docs:
+    guide: "docs/overview.md"
+bootstrap:
+  init:
+    - name: "prepare"
+      description: "Install the tkn CLI 0.46.2 and Tekton Pipelines v1.17.1, and wait for Prometheus and the client pod."
+      type: "file"
+      source: "bootstrap/prepare.sh"
+  manifests:
+    - name: "lab-start"
+      description: "The namespaces starfleet and monitoring, Prometheus (scraping only itself) and the client pod."
+      type: "file"
+      source: "manifests/lab-start.yaml"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - busybox:1.37.0
+      - prom/prometheus:v3.15.1
+      - nicolaka/netshoot:v0.13

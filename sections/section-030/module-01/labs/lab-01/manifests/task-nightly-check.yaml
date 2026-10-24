@@ -1,0 +1,19 @@
+# A one-step Task. The parameter outcome decides whether the run succeeds
+# (pass) or fails (fail), so failed TaskRuns can be produced on demand.
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: nightly-check
+  namespace: starfleet
+spec:
+  params:
+    - name: outcome
+      type: string
+      default: pass
+  steps:
+    - name: check
+      image: busybox:1.37.0
+      script: |
+        #!/bin/sh
+        echo "nightly check: $(params.outcome)"
+        [ "$(params.outcome)" = "pass" ]

@@ -1,0 +1,14 @@
+# Reference namespace configuration for outpost: keep the 3 newest
+# successful and the 2 newest failed runs, with no time limit.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tekton-pruner-namespace-spec
+  namespace: outpost
+  labels:
+    app.kubernetes.io/part-of: tekton-pruner
+    pruner.tekton.dev/config-type: namespace
+data:
+  ns-config: |
+    successfulHistoryLimit: 3
+    failedHistoryLimit: 2
