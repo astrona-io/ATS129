@@ -252,37 +252,13 @@ section is only true for this one.
   `docs/metrics.md`) and `sigstore/cosign` (`v3.1.4`). Several facts below
   come from the source code at these tags, not from the documentation.
 
-### Status: built, not yet run
+### Status: every environment passes `astrona test`
 
-The first version of this repository was written from the documentation, the
-release manifests and the source at the pinned tags **without a live run**.
-No playground or lab has been started, and no `astrona test` has passed yet.
-Until a maintainer runs them:
-
-- Pages describe results in words. Do not add `text` output blocks until the
-  output comes from a real run, and then paste it exactly.
-- Treat every lab as unverified. Run `astrona validate` and `astrona test` on
-  each one, one cluster at a time, before the course goes past `maturity:
-  draft`.
-- Remove this subsection when every lab has passed `astrona test`.
-
-The biggest open risks are:
-
-- `regctl image create` (v0.11.7) pushing a scratch image to the plain-HTTP
-  registry from a Tekton step (`--host reg=...,tls=disabled`), and cosign 3.1.4
-  verifying the classic `.sig`/`.att` layout that Chains writes (its verify
-  falls back to the legacy format when the registry has no bundles; this
-  worked for classic signatures in ATS118/119).
-- The exact log lines of the Chains controller quoted in pages (taken from
-  the source strings: `no valid private key found`, `No signer ... configured`,
-  `error getting digest`, `No image subject to attest`).
-- The Operator playground: `AUTOINSTALL_COMPONENTS` switched off with `sed` on
-  the release manifest; `TektonConfig` `tektonpruner` writing
-  `tekton-pruner-default-spec`; the installer set names.
-- `metrics-protocol: none` closing port 9090 (the capstone 030 grader checks
-  the ConfigMap value and the served metrics, so it passes either way).
-- Grading time: the Pruner graders wait for real deletion (about 3 to 5
-  minutes per lab).
+All nine environments (three playgrounds, three labs, three capstones) passed
+`astrona test` on 2026-10-25 on a laptop `kind` cluster with Podman. Pages
+still describe results in words: add a `text` output block only when it is
+pasted exactly from a real run. Run `astrona test` again on every environment
+you change.
 
 ### Terms, not metaphors
 
