@@ -34,8 +34,6 @@ training:
     name: Tekton
     code: TEKTON
     provider: Astrona
-    domain: "Supply Chain Security With Chains & Operations"
-    weight: 15
 
 modules:
 
