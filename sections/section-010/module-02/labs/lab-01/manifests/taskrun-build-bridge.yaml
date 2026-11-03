@@ -1,0 +1,16 @@
+# The TaskRun the lab starts with. It succeeded and Chains signed the image, but
+# the TaskRun provenance uses the default format (in-toto) and the default
+# storage (the TaskRun annotations only).
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  name: build-bridge
+  namespace: starfleet
+spec:
+  taskRef:
+    name: build-image
+  params:
+    - name: image
+      value: registry.localtest.me:5001/starfleet/bridge
+    - name: tag
+      value: "1.0.0"

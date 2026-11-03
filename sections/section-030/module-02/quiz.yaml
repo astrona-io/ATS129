@@ -1,0 +1,236 @@
+# Knowledge check for module 030-02. Listed in astrona.yaml as a `type: quiz` entry after the module summary.
+schema_version: 1
+kind: question_bank
+id: ats129-030-02
+course_id: ATS129
+exam_code: TEKTON
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: "section"
+  id: "section-030"
+  title: "Monitor Tekton With Prometheus"
+placement:
+  position: after
+  reading: sections/section-030/module-02/course-05-summary.md
+questions:
+- id: ats129-030-02-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Give each component its own scrape job"
+  source_readings:
+  - sections/section-030/module-02/course-01-scrape-the-other-tekton-components.md
+  prompt: "Why does each Tekton component get its own scrape job?"
+  options:
+  - id: a
+    text: "The `job` label then shows which component a series came from."
+    explanation: "Correct. The `job` label is the `job_name` of the scrape job, so queries and alerts can select a component."
+  - id: b
+    text: "Prometheus allows only one target per job."
+    explanation: "Not correct. A job can hold many targets."
+  - id: c
+    text: "Tekton components refuse a second scraper."
+    explanation: "Not correct. Components serve metrics to any client that reaches the port."
+  - id: d
+    text: "A job name is required to start a TaskRun."
+    explanation: "Not correct. Jobs are a Prometheus concept and do not start TaskRuns."
+  correct_option: a
+  explanation: "Correct. The `job` label is the `job_name` of the scrape job, so queries and alerts can select a component."
+- id: ats129-030-02-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Read an endpoint without Prometheus"
+  source_readings:
+  - sections/section-030/module-02/course-01-scrape-the-other-tekton-components.md
+  prompt: "How can you read the metrics of the Chains Service without any Prometheus?"
+  options:
+  - id: a
+    text: "With `kubectl get --raw` and the API server Service proxy path."
+    explanation: "Correct. The API server proxies a request to a named or numbered port of a Service, and `/metrics` returns the text format."
+  - id: b
+    text: "With `tkn chains metrics`."
+    explanation: "Not correct. `tkn` has no such command."
+  - id: c
+    text: "With `kubectl logs` on the Prometheus pod."
+    explanation: "Not correct. Prometheus logs do not contain the endpoint text."
+  - id: d
+    text: "With `kubectl describe taskrun`."
+    explanation: "Not correct. A TaskRun description holds no metrics."
+  correct_option: a
+  explanation: "Correct. The API server proxies a request to a named or numbered port of a Service, and `/metrics` returns the text format."
+- id: ats129-030-02-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Recognise a recording rule"
+  source_readings:
+  - sections/section-030/module-02/course-02-precompute-queries-with-recording-rules.md
+  prompt: "Which key makes a rule a recording rule instead of an alerting rule?"
+  options:
+  - id: a
+    text: "`alert`"
+    explanation: "Not correct. `alert` starts an alerting rule."
+  - id: b
+    text: "`record`"
+    explanation: "Correct. `record` holds the name of the new series, and `expr` is the query whose result is stored under that name."
+  - id: c
+    text: "`for`"
+    explanation: "Not correct. `for` is the pending time of an alerting rule."
+  - id: d
+    text: "`labels`"
+    explanation: "Not correct. `labels` adds labels in both kinds of rule."
+  correct_option: b
+  explanation: "Correct. `record` holds the name of the new series, and `expr` is the query whose result is stored under that name."
+- id: ats129-030-02-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Name a recorded series"
+  source_readings:
+  - sections/section-030/module-02/course-02-precompute-queries-with-recording-rules.md
+  prompt: "What does the colon in `tekton:taskrun_failed:ratio` tell a reader?"
+  options:
+  - id: a
+    text: "The series was produced by a recording rule."
+    explanation: "Correct. Instrumented metrics do not use colons in their names, so a colon marks a recorded series."
+  - id: b
+    text: "The series comes from a remote Prometheus."
+    explanation: "Not correct. Remote data keeps its own names."
+  - id: c
+    text: "The series is a histogram."
+    explanation: "Not correct. Histograms are marked by `_bucket`, `_sum` and `_count`."
+  - id: d
+    text: "The series has no labels."
+    explanation: "Not correct. A recorded series can keep labels."
+  correct_option: a
+  explanation: "Correct. Instrumented metrics do not use colons in their names, so a colon marks a recorded series."
+- id: ats129-030-02-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Place a rule group correctly"
+  source_readings:
+  - sections/section-030/module-02/course-02-precompute-queries-with-recording-rules.md
+  prompt: "Where must a rule group be written for Prometheus to load it?"
+  options:
+  - id: a
+    text: "Under `scrape_configs` in `prometheus.yml`."
+    explanation: "Not correct. `scrape_configs` defines targets, not rules."
+  - id: b
+    text: "In a file named in `rule_files`."
+    explanation: "Correct. Rule groups live in rule files, and `rule_files` in `prometheus.yml` names the files Prometheus loads."
+  - id: c
+    text: "In the `config-observability` ConfigMap."
+    explanation: "Not correct. `config-observability` is a Tekton ConfigMap."
+  - id: d
+    text: "In the Prometheus Deployment arguments."
+    explanation: "Not correct. The arguments set flags, not rules."
+  correct_option: b
+  explanation: "Correct. Rule groups live in rule files, and `rule_files` in `prometheus.yml` names the files Prometheus loads."
+- id: ats129-030-02-q06
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Use the running-runs gauge"
+  source_readings:
+  - sections/section-030/module-02/course-03-alert-on-stuck-and-slow-runs.md
+  prompt: "Which metric holds the number of TaskRuns that the Pipelines controller counts as running?"
+  options:
+  - id: a
+    text: "`tekton_pipelines_controller_taskrun_total`"
+    explanation: "Not correct. That counter only counts finished runs."
+  - id: b
+    text: "`tekton_pipelines_controller_running_taskruns`"
+    explanation: "Correct. `tekton_pipelines_controller_running_taskruns` is a gauge that goes up and down."
+  - id: c
+    text: "`tekton_pipelines_controller_taskrun_duration_seconds_count`"
+    explanation: "Not correct. The count of the duration histogram counts finished runs."
+  - id: d
+    text: "`up`"
+    explanation: "Not correct. `up` shows whether a scrape worked."
+  correct_option: b
+  explanation: "Correct. `tekton_pipelines_controller_running_taskruns` is a gauge that goes up and down."
+- id: ats129-030-02-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Explain the for time"
+  source_readings:
+  - sections/section-030/module-02/course-03-alert-on-stuck-and-slow-runs.md
+  prompt: "An alert has `for: 1m`. The expression is true for 30 seconds and then false. What state does the alert end in?"
+  options:
+  - id: a
+    text: "`firing`"
+    explanation: "Not correct. `firing` needs the expression true for the whole time."
+  - id: b
+    text: "`inactive`, and the timer starts again at the next true value"
+    explanation: "Correct. The alert goes back to `inactive` when the expression turns false before the `for` time passes."
+  - id: c
+    text: "`pending` forever"
+    explanation: "Not correct. `pending` ends when the expression is false."
+  - id: d
+    text: "Prometheus deletes the rule"
+    explanation: "Not correct. Prometheus never deletes rules by itself."
+  correct_option: b
+  explanation: "Correct. The alert goes back to `inactive` when the expression turns false before the `for` time passes."
+- id: ats129-030-02-q08
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Read a duration alert"
+  source_readings:
+  - sections/section-030/module-02/course-03-alert-on-stuck-and-slow-runs.md
+  prompt: "What does `histogram_quantile(0.95, sum by (le) (rate(tekton_pipelines_controller_taskrun_duration_seconds_bucket[15m])))` estimate?"
+  options:
+  - id: a
+    text: "The 95th percentile of the duration of TaskRuns that ended in the last 15 minutes."
+    explanation: "Correct. The rate of the bucket counters covers runs that finished in the window, and the function estimates the quantile from the buckets."
+  - id: b
+    text: "The number of TaskRuns that ran longer than 15 minutes."
+    explanation: "Not correct. The function returns a duration, not a count."
+  - id: c
+    text: "The average duration of all running TaskRuns."
+    explanation: "Not correct. Running TaskRuns are not in the histogram yet."
+  - id: d
+    text: "The share of TaskRuns that failed."
+    explanation: "Not correct. A failure share needs the `status` label."
+  correct_option: a
+  explanation: "Correct. The rate of the bucket counters covers runs that finished in the window, and the function estimates the quantile from the buckets."
+- id: ats129-030-02-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Alert when a metric disappears"
+  source_readings:
+  - sections/section-030/module-02/course-03-alert-on-stuck-and-slow-runs.md
+  prompt: "Why add `absent(tekton_pipelines_controller_running_taskruns)` next to a value alert?"
+  options:
+  - id: a
+    text: "A value alert cannot fire when the series do not exist."
+    explanation: "Correct. When the controller stops, the series vanish after the staleness period, and `absent` returns `1` for the missing metric."
+  - id: b
+    text: "`absent` makes the gauge faster."
+    explanation: "Not correct. `absent` does not change how fast a gauge updates."
+  - id: c
+    text: "`absent` resets the counter."
+    explanation: "Not correct. `absent` is a query function and does not reset counters."
+  - id: d
+    text: "Prometheus requires one `absent` rule per job."
+    explanation: "Not correct. Prometheus has no such requirement."
+  correct_option: a
+  explanation: "Correct. When the controller stops, the series vanish after the staleness period, and `absent` returns `1` for the missing metric."
+- id: ats129-030-02-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Drop series at scrape time"
+  source_readings:
+  - sections/section-030/module-02/course-04-keep-the-series-count-under-control.md
+  prompt: "Which block removes a metric by name after the scrape?"
+  options:
+  - id: a
+    text: "`relabel_configs` with `action: drop` on `__name__`"
+    explanation: "Not correct. `relabel_configs` runs before the scrape, when a target has no metric name."
+  - id: b
+    text: "`metric_relabel_configs` with `action: drop` on `__name__`"
+    explanation: "Correct. `metric_relabel_configs` runs on each series after the scrape, where the metric name exists."
+  - id: c
+    text: "`rule_files` with `action: drop`"
+    explanation: "Not correct. `rule_files` lists files and has no actions."
+  - id: d
+    text: "`global.external_labels`"
+    explanation: "Not correct. External labels add labels and drop nothing."
+  correct_option: b
+  explanation: "Correct. `metric_relabel_configs` runs on each series after the scrape, where the metric name exists."

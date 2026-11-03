@@ -32,9 +32,9 @@ contains:
 
 | Section | Title | Modules | Labs | Topic |
 | --- | --- | --- | --- | --- |
-| [010](sections/section-010) | Sign And Attest Builds With Tekton Chains | 1 | 1 + capstone | Supply chain security |
-| [020](sections/section-020) | Operate Tekton With The Operator And The Pruner | 1 | 1 + capstone | Operations |
-| [030](sections/section-030) | Monitor Tekton With Prometheus | 1 | 1 + capstone | Monitoring |
+| [010](sections/section-010) | Sign And Attest Builds With Tekton Chains | 2 | 2 + capstone | Supply chain security |
+| [020](sections/section-020) | Operate Tekton With The Operator And The Pruner | 2 | 2 + capstone | Operations |
+| [030](sections/section-030) | Monitor Tekton With Prometheus | 2 | 2 + capstone | Monitoring |
 
 The order follows a build's life: sign what a run produced, clean up the
 runs afterwards, and watch the installation that runs them.
@@ -48,12 +48,18 @@ runs afterwards, and watch the installation that runs them.
 | 010-01 | [Signed Provenance With Tekton Chains](sections/section-010/module-01/course.md) | 3 | [lab-01](sections/section-010/module-01/labs/lab-01) |
 | 020-01 | [Manage Tekton With The Operator And The Pruner](sections/section-020/module-01/course.md) | 3 | [lab-01](sections/section-020/module-01/labs/lab-01) |
 | 030-01 | [Monitor Tekton With Prometheus](sections/section-030/module-01/course.md) | 3 | [lab-01](sections/section-030/module-01/labs/lab-01) |
+| 010-02 | [Provenance Formats, Storage Backends And Signers](sections/section-010/module-02/course.md) | 4 | [lab-01](sections/section-010/module-02/labs/lab-01) |
+| 020-02 | [Configure Tekton Components Through TektonConfig](sections/section-020/module-02/course.md) | 4 | [lab-01](sections/section-020/module-02/labs/lab-01) |
+| 030-02 | [Query And Tune Tekton Metrics](sections/section-030/module-02/course.md) | 4 | [lab-01](sections/section-030/module-02/labs/lab-01) |
 
 | Lab | Title | Kind | Faults or work |
 | --- | --- | --- | --- |
 | 010-01 | Sign Built Images With Tekton Chains | build | no signing key, default `chains-config`, results not type-hinted; the run still says `signed: "true"` |
 | 020-01 | Configure Time-Based And History-Based Pruning | build | shipped Pruner configuration; add namespace level, a 60-second TTL in `starfleet`, history limits in `outpost` |
 | 030-01 | Scrape Tekton And Alert On Failed TaskRuns | build | Prometheus scrapes only itself; add the Tekton job and a failed-run alert |
+| 010-02 | Choose Chains Provenance Format And Storage | build | provenance in the default format and only in annotations; switch to `slsa/v2alpha4` and add `oci` storage |
+| 020-02 | Tune Tekton Pipelines Through The TektonConfig | build | a `lite` TektonConfig with defaults; set `enable-api-fields`, `default-timeout-minutes` and a `config-logging` key |
+| 030-02 | Record Failure Ratio And Alert On Stuck TaskRuns | build | Prometheus scrapes the controller; add a recording rule and a running-runs alert |
 
 ---
 

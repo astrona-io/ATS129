@@ -1,0 +1,6 @@
+# Starting namespace for this ATS129 environment. Every Task and TaskRun of
+# the course runs in starfleet.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: starfleet

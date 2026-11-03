@@ -1,0 +1,56 @@
+# Tune Tekton Pipelines Through The TektonConfig
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-129-lab-020-02"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-tekton"
+      description: "Installs the tkn CLI 0.46.2 and the Tekton Operator v0.81.2 without a TektonConfig"
+      type: "file"
+      source: "bootstrap/01-install-tekton.sh"
+    - name: "ats-129-lab-020-02-setup"
+      description: "Creates the TektonConfig with the profile lite and waits until Tekton Pipelines is installed and Ready"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+  manifests:
+    - name: "lab-start"
+      description: "The namespace starfleet"
+      type: "file"
+      source: "manifests/lab-start.yaml"
+testing:
+  init:
+    - name: "wait-for-tekton"
+      description: "Waits until the TektonConfig is Ready and every Tekton Deployment is available"
+      type: "file"
+      source: "testing/wait-for-tekton.sh"
+    - name: "reference-solution"
+      description: "The configuration a correct learner makes; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-tektonconfig"
+      description: "Confirms the TektonConfig keeps its profile and sets enable-api-fields, default-timeout-minutes and the controller log level"
+      type: "file"
+      source: "validation/validate-tektonconfig.sh"
+    - name: "validate-configmaps"
+      description: "Confirms feature-flags, config-defaults and config-logging carry the new values"
+      type: "file"
+      source: "validation/validate-configmaps.sh"
+    - name: "validate-tekton-ready"
+      description: "Confirms the TektonConfig is Ready and the Pipelines controller runs"
+      type: "file"
+      source: "validation/validate-tekton-ready.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - busybox:1.37.0

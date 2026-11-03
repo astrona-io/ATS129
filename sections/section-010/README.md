@@ -16,10 +16,14 @@ This section shows Tekton Chains at work. You first see how Chains watches finis
 - Storing signatures and attestations in an OCI registry, including a plain-HTTP lab registry.
 - Verifying with `cosign verify` and `cosign verify-attestation`.
 - Keyless signing with Fulcio, uploads to the Rekor transparency log, and KMS signers.
+- The four TaskRun provenance formats, the SLSA version of each, and the fields of a v0.2 and a v1.0 statement.
+- Storage as a list: the `tekton` annotations, the `oci` attestation, `storage.oci.repository`, and the keys of `gcs`, `docdb`, `grafeas` and `archivista`.
+- PipelineRun provenance, deep inspection, and the three artifact prefixes.
+- The `x509` and `kms` signers, key rotation, and checking a payload without the cluster.
 
 ## The learning path
 
-The section has one module. It has a landing page, three short parts, a graded lab right after the last part, and a summary. The module also has its own playground, a cluster where you can explore freely, and the landing page starts it for you.
+The section has two modules. Each has a landing page, short parts, a graded lab right after the part it tests, a summary and a knowledge check. Each module also has its own playground, a cluster where you can explore freely, and the landing page starts it for you.
 
 ### 1. Signed Provenance With Tekton Chains
 
@@ -29,6 +33,16 @@ The module starts at its landing page, which also launches the playground. The p
 2. Sign Images And Store Attestations In A Registry
 3. Keyless Signing, Transparency Logs And Quiet Failures, followed by the lab **Sign Built Images With Tekton Chains**
 4. Summary
+
+### 2. Provenance Formats, Storage Backends And Signers
+
+The second module goes deeper. The playground starts with Tekton Pipelines v1.17.1, Tekton Chains v0.29.9 with no key yet, the in-cluster registry and the workstation pod, as in module 1. The first part sets up a key and a Task.
+
+1. Pick A Provenance Format
+2. Choose Where Chains Stores Provenance, followed by the lab **Choose Chains Provenance Format And Storage**
+3. Provenance For PipelineRuns And Images
+4. Signers, Keys And Offline Verification
+5. Summary
 
 ## Section capstone: Repair A Broken Signing Setup
 

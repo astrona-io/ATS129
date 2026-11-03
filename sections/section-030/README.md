@@ -14,10 +14,14 @@ This section connects Tekton to Prometheus. You first read the metrics the Tekto
 - A Prometheus scrape job for the controller Service on port `9090`, and how a Prometheus Operator setup does the same with a ServiceMonitor.
 - PromQL queries for failure counts, running runs and duration percentiles.
 - Alerting rules: `expr`, `for`, `labels`, `annotations`, and the states `inactive`, `pending` and `firing`.
+- One scrape job per component, and the metrics port of Chains, the Pruner and the webhook.
+- Recording rules, the `level:metric:operations` naming, and reading a recorded series back.
+- Alerts on running and slow runs and on missing metrics.
+- Metric levels, `metric_relabel_configs` and retention to keep the series count down.
 
 ## The learning path
 
-The section has one module. It has a landing page, three short parts, a graded lab right after the last part, and a summary. The module also has its own playground, a cluster where you can explore freely, and the landing page starts it for you.
+The section has two modules. Each has a landing page, short parts, a graded lab right after the part it tests, a summary and a knowledge check. Each module also has its own playground, a cluster where you can explore freely, and the landing page starts it for you.
 
 ### 1. Monitor Tekton With Prometheus
 
@@ -27,6 +31,16 @@ The module starts at its landing page, which also launches the playground. The p
 2. Scrape Tekton With Prometheus
 3. Alert On Failed TaskRuns, followed by the lab **Scrape Tekton And Alert On Failed TaskRuns**
 4. Summary
+
+### 2. Query And Tune Tekton Metrics
+
+The second module goes deeper. The playground runs Tekton Pipelines v1.17.1, Chains and the Pruner, and a Prometheus server in `monitoring` that scrapes the Pipelines controller.
+
+1. Scrape The Other Tekton Components
+2. Precompute Queries With Recording Rules
+3. Alert On Stuck And Slow Runs, followed by the lab **Record Failure Ratio And Alert On Stuck TaskRuns**
+4. Keep The Series Count Under Control
+5. Summary
 
 ## Section capstone: Repair Tekton Monitoring
 

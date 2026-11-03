@@ -1,0 +1,236 @@
+# Knowledge check for module 020-02. Listed in astrona.yaml as a `type: quiz` entry after the module summary.
+schema_version: 1
+kind: question_bank
+id: ats129-020-02
+course_id: ATS129
+exam_code: TEKTON
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: "section"
+  id: "section-020"
+  title: "Operate Tekton With The Operator And The Pruner"
+placement:
+  position: after
+  reading: sections/section-020/module-02/course-05-summary.md
+questions:
+- id: ats129-020-02-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Name the profile components"
+  source_readings:
+  - sections/section-020/module-02/course-01-choose-profiles-and-components.md
+  prompt: "Which components does the profile `basic` install?"
+  options:
+  - id: a
+    text: "Tekton Pipelines only"
+    explanation: "Not correct. That is the profile `lite`."
+  - id: b
+    text: "Tekton Pipelines, Triggers and Chains"
+    explanation: "Correct. `lite` installs Pipelines, `basic` adds Triggers and Chains, and `all` adds the Dashboard."
+  - id: c
+    text: "Tekton Pipelines, Triggers, Chains and the Dashboard"
+    explanation: "Not correct. That is the profile `all`."
+  - id: d
+    text: "Only the Tekton Operator"
+    explanation: "Not correct. The Operator is installed separately and is not part of a profile."
+  correct_option: b
+  explanation: "Correct. `lite` installs Pipelines, `basic` adds Triggers and Chains, and `all` adds the Dashboard."
+- id: ats129-020-02-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Remove a component safely"
+  source_readings:
+  - sections/section-020/module-02/course-01-choose-profiles-and-components.md
+  prompt: "How do you remove Tekton Chains that the Operator installed?"
+  options:
+  - id: a
+    text: "Delete the Chains Deployment"
+    explanation: "Not correct. The Operator creates a deleted Deployment again."
+  - id: b
+    text: "Change `spec.profile` to a profile without Chains"
+    explanation: "Correct. The Operator removes components that the profile no longer lists, together with their Deployments."
+  - id: c
+    text: "Delete the namespace `tekton-pipelines`"
+    explanation: "Not correct. Deleting the namespace removes Pipelines too and the Operator rebuilds it."
+  - id: d
+    text: "Edit `config-defaults`"
+    explanation: "Not correct. `config-defaults` holds run defaults, not components."
+  correct_option: b
+  explanation: "Correct. The Operator removes components that the profile no longer lists, together with their Deployments."
+- id: ats129-020-02-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Find the component resource"
+  source_readings:
+  - sections/section-020/module-02/course-01-choose-profiles-and-components.md
+  prompt: "Which resource does the Operator create for Tekton Pipelines, and with which name?"
+  options:
+  - id: a
+    text: "`TektonPipeline` named `pipeline`"
+    explanation: "Correct. Each component gets a resource of its own kind with a fixed name, and the `TektonConfig` owns it."
+  - id: b
+    text: "`TektonConfig` named `pipelines`"
+    explanation: "Not correct. `TektonConfig` is the one resource you edit and is named `config`."
+  - id: c
+    text: "`TektonInstallerSet` named `pipeline`"
+    explanation: "Not correct. Installer sets hold manifest parts and are not the component resource."
+  - id: d
+    text: "`Deployment` named `tekton`"
+    explanation: "Not correct. A Deployment is created by the Operator and is not the component resource."
+  correct_option: a
+  explanation: "Correct. Each component gets a resource of its own kind with a fixed name, and the `TektonConfig` owns it."
+- id: ats129-020-02-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Map a field to a ConfigMap"
+  source_readings:
+  - sections/section-020/module-02/course-02-set-pipelines-behaviour-with-spec-pipeline.md
+  prompt: "In which ConfigMap does the field `spec.pipeline.default-timeout-minutes` arrive?"
+  options:
+  - id: a
+    text: "`feature-flags`"
+    explanation: "Not correct. `feature-flags` holds switches such as `enable-api-fields`."
+  - id: b
+    text: "`config-defaults`"
+    explanation: "Correct. `config-defaults` holds the defaults for runs, such as the timeout and the service account."
+  - id: c
+    text: "`config-logging`"
+    explanation: "Not correct. `config-logging` holds log levels."
+  - id: d
+    text: "`config-observability`"
+    explanation: "Not correct. `config-observability` holds metrics levels."
+  correct_option: b
+  explanation: "Correct. `config-defaults` holds the defaults for runs, such as the timeout and the service account."
+- id: ats129-020-02-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Predict the effect of stable"
+  source_readings:
+  - sections/section-020/module-02/course-02-set-pipelines-behaviour-with-spec-pipeline.md
+  prompt: "After `enable-api-fields: stable`, what happens to a Task that uses a beta field?"
+  options:
+  - id: a
+    text: "It is accepted as before."
+    explanation: "Not correct. `beta` is the value that accepts beta fields."
+  - id: b
+    text: "It is rejected by the API."
+    explanation: "Correct. `stable` allows only the stable fields, so a beta field is rejected."
+  - id: c
+    text: "It is converted to the stable form."
+    explanation: "Not correct. Tekton does not rewrite resources."
+  - id: d
+    text: "It runs with a warning."
+    explanation: "Not correct. Rejection happens at creation, not at run time."
+  correct_option: b
+  explanation: "Correct. `stable` allows only the stable fields, so a beta field is rejected."
+- id: ats129-020-02-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Understand a hand edit"
+  source_readings:
+  - sections/section-020/module-02/course-02-set-pipelines-behaviour-with-spec-pipeline.md
+  prompt: "You change `default-timeout-minutes` in the ConfigMap `config-defaults` by hand. What happens?"
+  options:
+  - id: a
+    text: "The change stays because the ConfigMap is the source of truth."
+    explanation: "Not correct. The Operator owns the ConfigMap content."
+  - id: b
+    text: "The Operator writes the value from the TektonConfig back."
+    explanation: "Correct. The `TektonConfig` is the source of truth, and the Operator reconciles the ConfigMap to match it."
+  - id: c
+    text: "The Operator deletes the ConfigMap."
+    explanation: "Not correct. The Operator does not delete it."
+  - id: d
+    text: "The Pipelines controller restarts and keeps the new value."
+    explanation: "Not correct. A restart does not change who owns the value."
+  correct_option: b
+  explanation: "Correct. The `TektonConfig` is the source of truth, and the Operator reconciles the ConfigMap to match it."
+- id: ats129-020-02-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Place an options key"
+  source_readings:
+  - sections/section-020/module-02/course-03-reach-any-configmap-and-deployment-with-options.md
+  prompt: "Which path sets the key `loglevel.controller` in `config-logging` through the Operator?"
+  options:
+  - id: a
+    text: "`spec.pipeline.loglevel.controller`"
+    explanation: "Not correct. There is no such field in `spec.pipeline`."
+  - id: b
+    text: "`spec.pipeline.options.configMaps.config-logging.data`"
+    explanation: "Correct. Keys without a field go under `options.configMaps.<name>.data`."
+  - id: c
+    text: "`spec.config.logging`"
+    explanation: "Not correct. `spec.config` sets node selectors and tolerations."
+  - id: d
+    text: "`spec.pipeline.options.deployments.config-logging`"
+    explanation: "Not correct. `options.deployments` patches Deployments, not ConfigMaps."
+  correct_option: b
+  explanation: "Correct. Keys without a field go under `options.configMaps.<name>.data`."
+- id: ats129-020-02-q08
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Read a dotted key"
+  source_readings:
+  - sections/section-020/module-02/course-03-reach-any-configmap-and-deployment-with-options.md
+  prompt: "Which jsonpath reads the key `loglevel.controller` from a ConfigMap?"
+  options:
+  - id: a
+    text: "`{.data.loglevel.controller}`"
+    explanation: "Not correct. Without the escape, jsonpath reads a nested `controller` field."
+  - id: b
+    text: "`{.data.loglevel\\.controller}`"
+    explanation: "Correct. The dot is part of the key name, so jsonpath needs the escape `\\.`."
+  - id: c
+    text: "`{.data[loglevel][controller]}`"
+    explanation: "Not correct. That form does not address a dotted key."
+  - id: d
+    text: "`{.spec.loglevel.controller}`"
+    explanation: "Not correct. A ConfigMap has no `spec`."
+  correct_option: b
+  explanation: "Correct. The dot is part of the key name, so jsonpath needs the escape `\\.`."
+- id: ats129-020-02-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Choose the setting place"
+  source_readings:
+  - sections/section-020/module-02/course-03-reach-any-configmap-and-deployment-with-options.md
+  prompt: "A team needs a node selector for the pods of all Tekton components. Where does it go?"
+  options:
+  - id: a
+    text: "`spec.pipeline.options.configMaps`"
+    explanation: "Not correct. That path changes ConfigMap keys."
+  - id: b
+    text: "`spec.config`"
+    explanation: "Correct. `spec.config` holds node selectors and tolerations that the Operator copies into the pod templates of all components."
+  - id: c
+    text: "`config-defaults`"
+    explanation: "Not correct. `config-defaults` is for run defaults."
+  - id: d
+    text: "`spec.profile`"
+    explanation: "Not correct. `spec.profile` chooses components."
+  correct_option: b
+  explanation: "Correct. `spec.config` holds node selectors and tolerations that the Operator copies into the pod templates of all components."
+- id: ats129-020-02-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Start a stuck-install check"
+  source_readings:
+  - sections/section-020/module-02/course-04-read-the-status-and-fix-a-stuck-installation.md
+  prompt: "A change does not arrive and `Ready` is `False`. Where do you look first?"
+  options:
+  - id: a
+    text: "The pod logs of a TaskRun"
+    explanation: "Not correct. TaskRuns are not involved in an install."
+  - id: b
+    text: "The conditions of the `TektonConfig`"
+    explanation: "Correct. The `TektonConfig` condition message usually names the component or step that waits."
+  - id: c
+    text: "The node disk"
+    explanation: "Not correct. A node issue is a later level if pods are pending."
+  - id: d
+    text: "The Tekton Dashboard"
+    explanation: "Not correct. The Dashboard is not installed by `lite`."
+  correct_option: b
+  explanation: "Correct. The `TektonConfig` condition message usually names the component or step that waits."

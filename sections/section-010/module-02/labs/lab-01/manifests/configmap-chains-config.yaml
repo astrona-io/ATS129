@@ -1,0 +1,12 @@
+# Starting chains-config: image signatures go to the registry, no transparency
+# log, plain HTTP allowed for the lab registry. The TaskRun provenance format and
+# storage are not set, so the defaults apply (in-toto, tekton).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chains-config
+  namespace: tekton-chains
+data:
+  artifacts.oci.storage: oci
+  transparency.enabled: "false"
+  storage.oci.repository.insecure: "true"

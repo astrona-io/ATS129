@@ -15,10 +15,14 @@ You first install Tekton through the Operator with a single `TektonConfig`, read
 - History-based pruning with `successfulHistoryLimit`, `failedHistoryLimit` and `historyLimit`.
 - Time-based pruning with `ttlSecondsAfterFinished`.
 - `enforcedConfigLevel`, the global ConfigMap `tekton-pruner-default-spec` and the namespace ConfigMap `tekton-pruner-namespace-spec`, with their labels and webhook validation.
+- The profiles `lite`, `basic` and `all`, and the component resources the Operator creates.
+- `spec.pipeline` fields and the ConfigMap key each one writes.
+- `spec.pipeline.options` for ConfigMap keys and Deployment patches, and `spec.config` for pod placement.
+- Reading conditions, component resources and `TektonInstallerSet` objects to find a stuck installation.
 
 ## The learning path
 
-The section has one module. It has a landing page, three short parts, a graded lab right after the last part, and a summary. The module also has its own playground, a cluster where you can explore freely, and the landing page starts it for you.
+The section has two modules. Each has a landing page, short parts, a graded lab right after the part it tests, a summary and a knowledge check. Each module also has its own playground, a cluster where you can explore freely, and the landing page starts it for you.
 
 ### 1. Manage Tekton With The Operator And The Pruner
 
@@ -28,6 +32,16 @@ The module starts at its landing page, which also launches the playground. The p
 2. Keep A Fixed Number Of Runs With History Limits
 3. Delete Old Runs With TTLs And Namespace Settings, followed by the lab **Configure Time-Based And History-Based Pruning**
 4. Summary
+
+### 2. Configure Tekton Components Through TektonConfig
+
+The second module goes deeper. The playground runs the Tekton Operator v0.81.2 and a `TektonConfig` with the profile `lite`, which has already installed Tekton Pipelines v1.15.3.
+
+1. Choose Profiles And Components
+2. Set Pipelines Behaviour With spec.pipeline
+3. Reach Any ConfigMap And Deployment With Options, followed by the lab **Tune Tekton Pipelines Through The TektonConfig**
+4. Read The Status And Fix A Stuck Installation
+5. Summary
 
 ## Section capstone: Repair Run Cleanup
 

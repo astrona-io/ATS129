@@ -1,0 +1,236 @@
+# Knowledge check for module 010-02. Listed in astrona.yaml as a `type: quiz` entry after the module summary.
+schema_version: 1
+kind: question_bank
+id: ats129-010-02
+course_id: ATS129
+exam_code: TEKTON
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: "section"
+  id: "section-010"
+  title: "Sign And Attest Builds With Tekton Chains"
+placement:
+  position: after
+  reading: sections/section-010/module-02/course-05-summary.md
+questions:
+- id: ats129-010-02-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Map a format to a SLSA version"
+  source_readings:
+  - sections/section-010/module-02/course-01-pick-a-provenance-format.md
+  prompt: "Which value of `artifacts.taskrun.format` writes SLSA v1.0 provenance?"
+  options:
+  - id: a
+    text: "`in-toto`"
+    explanation: "Not correct. `in-toto` writes SLSA v0.2."
+  - id: b
+    text: "`slsa/v1`"
+    explanation: "Not correct. `slsa/v1` is an alias of `in-toto` and writes SLSA v0.2."
+  - id: c
+    text: "`slsa/v2alpha4`"
+    explanation: "Correct. `slsa/v2alpha3` and `slsa/v2alpha4` write SLSA v1.0 with the `predicateType` `https://slsa.dev/provenance/v1`."
+  - id: d
+    text: "`simplesigning`"
+    explanation: "Not correct. `simplesigning` is the format of image signatures."
+  correct_option: c
+  explanation: "Correct. `slsa/v2alpha3` and `slsa/v2alpha4` write SLSA v1.0 with the `predicateType` `https://slsa.dev/provenance/v1`."
+- id: ats129-010-02-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Pick the verify type"
+  source_readings:
+  - sections/section-010/module-02/course-01-pick-a-provenance-format.md
+  prompt: "Which `--type` does `cosign verify-attestation` need for a statement in the `slsa/v2alpha4` format?"
+  options:
+  - id: a
+    text: "`slsaprovenance`"
+    explanation: "Not correct. `slsaprovenance` matches SLSA v0.2."
+  - id: b
+    text: "`slsaprovenance1`"
+    explanation: "Correct. `slsaprovenance1` matches the SLSA v1.0 predicate type."
+  - id: c
+    text: "`spdx`"
+    explanation: "Not correct. `spdx` is for software bills of materials."
+  - id: d
+    text: "`custom`"
+    explanation: "Not correct. `custom` needs a predicate type you define."
+  correct_option: b
+  explanation: "Correct. `slsaprovenance1` matches the SLSA v1.0 predicate type."
+- id: ats129-010-02-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Know that old runs keep old statements"
+  source_readings:
+  - sections/section-010/module-02/course-01-pick-a-provenance-format.md
+  prompt: "You change `artifacts.taskrun.format`. What happens to a TaskRun that Chains already handled?"
+  options:
+  - id: a
+    text: "Chains rewrites its statement in the new format."
+    explanation: "Not correct. Chains never rewrites a handled run."
+  - id: b
+    text: "Its statement stays as it was."
+    explanation: "Correct. Chains handles a run once, so only runs handled after the change get the new format."
+  - id: c
+    text: "Chains deletes its annotations."
+    explanation: "Not correct. Annotations stay on the run."
+  - id: d
+    text: "The TaskRun is run again."
+    explanation: "Not correct. Chains does not start runs."
+  correct_option: b
+  explanation: "Correct. Chains handles a run once, so only runs handled after the change get the new format."
+- id: ats129-010-02-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Read the storage list"
+  source_readings:
+  - sections/section-010/module-02/course-02-choose-where-chains-stores-provenance.md
+  prompt: "What does `artifacts.taskrun.storage: tekton,oci` do?"
+  options:
+  - id: a
+    text: "It writes the statement only to the registry."
+    explanation: "Not correct. `tekton` is in the list as well."
+  - id: b
+    text: "It writes the same signed statement to the TaskRun annotations and to the registry."
+    explanation: "Correct. The value is a comma-separated list, and Chains writes the statement to every backend in it."
+  - id: c
+    text: "It signs twice with two keys."
+    explanation: "Not correct. The signer is a separate key."
+  - id: d
+    text: "It writes the statement to a Tekton Hub."
+    explanation: "Not correct. There is no such backend."
+  correct_option: b
+  explanation: "Correct. The value is a comma-separated list, and Chains writes the statement to every backend in it."
+- id: ats129-010-02-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "See the weakness of tekton storage"
+  source_readings:
+  - sections/section-010/module-02/course-02-choose-where-chains-stores-provenance.md
+  prompt: "Why should a cluster that prunes runs not rely on `tekton` storage alone?"
+  options:
+  - id: a
+    text: "Annotations are not signed."
+    explanation: "Not correct. The statement in the annotations is signed."
+  - id: b
+    text: "The annotations are deleted together with the run."
+    explanation: "Correct. The statement lives in annotations on the run, so deleting the run deletes the statement."
+  - id: c
+    text: "The Pruner rewrites the annotations."
+    explanation: "Not correct. The Pruner deletes runs and does not rewrite them."
+  - id: d
+    text: "`tekton` storage is slower."
+    explanation: "Not correct. Speed is not the reason."
+  correct_option: b
+  explanation: "Correct. The statement lives in annotations on the run, so deleting the run deletes the statement."
+- id: ats129-010-02-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Name the key for a separate repository"
+  source_readings:
+  - sections/section-010/module-02/course-02-choose-where-chains-stores-provenance.md
+  prompt: "Which key makes Chains write signatures and attestations to a repository other than the image repository?"
+  options:
+  - id: a
+    text: "`storage.oci.repository`"
+    explanation: "Correct. When `storage.oci.repository` is set, Chains stores signatures and attestations there."
+  - id: b
+    text: "`artifacts.oci.repository`"
+    explanation: "Not correct. There is no such artifacts key."
+  - id: c
+    text: "`transparency.url`"
+    explanation: "Not correct. `transparency.url` names a transparency log."
+  - id: d
+    text: "`builder.id`"
+    explanation: "Not correct. `builder.id` names the builder in the statement."
+  correct_option: a
+  explanation: "Correct. When `storage.oci.repository` is set, Chains stores signatures and attestations there."
+- id: ats129-010-02-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Know that prefixes are separate"
+  source_readings:
+  - sections/section-010/module-02/course-03-provenance-for-pipelineruns-and-images.md
+  prompt: "A cluster sets only `artifacts.taskrun.format: slsa/v2alpha4`. In which format is PipelineRun provenance written?"
+  options:
+  - id: a
+    text: "`slsa/v2alpha4`"
+    explanation: "Not correct. The TaskRun key does not change the PipelineRun key."
+  - id: b
+    text: "`in-toto`, the default"
+    explanation: "Correct. Each artifact type has its own `format` key, and `artifacts.pipelinerun.format` defaults to `in-toto`."
+  - id: c
+    text: "`simplesigning`"
+    explanation: "Not correct. `simplesigning` is the image signature format."
+  - id: d
+    text: "It is not written."
+    explanation: "Not correct. Chains writes PipelineRun provenance by default."
+  correct_option: b
+  explanation: "Correct. Each artifact type has its own `format` key, and `artifacts.pipelinerun.format` defaults to `in-toto`."
+- id: ats129-010-02-q08
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Explain deep inspection"
+  source_readings:
+  - sections/section-010/module-02/course-03-provenance-for-pipelineruns-and-images.md
+  prompt: "What does `artifacts.pipelinerun.enable-deep-inspection: \"true\"` change?"
+  options:
+  - id: a
+    text: "Chains verifies the signatures of the child runs."
+    explanation: "Not correct. Chains does not verify child signatures."
+  - id: b
+    text: "Chains looks at the results of child TaskRuns for artifacts and includes them in the PipelineRun provenance."
+    explanation: "Correct. Deep inspection reads the child TaskRun results so a Pipeline without its own results still names its artifacts."
+  - id: c
+    text: "Chains signs every step of every TaskRun."
+    explanation: "Not correct. It does not sign steps."
+  - id: d
+    text: "Chains stores the provenance in three backends."
+    explanation: "Not correct. Storage is a separate setting."
+  correct_option: b
+  explanation: "Correct. Deep inspection reads the child TaskRun results so a Pipeline without its own results still names its artifacts."
+- id: ats129-010-02-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Choose a signer"
+  source_readings:
+  - sections/section-010/module-02/course-04-signers-keys-and-offline-verification.md
+  prompt: "Which signer keeps the private key out of the cluster?"
+  options:
+  - id: a
+    text: "`x509` with a key in `signing-secrets`"
+    explanation: "Not correct. That key is a Secret in the cluster."
+  - id: b
+    text: "`kms`"
+    explanation: "Correct. With `kms`, the key stays in the key management service and Chains asks it to sign."
+  - id: c
+    text: "`simplesigning`"
+    explanation: "Not correct. `simplesigning` is an image signature format."
+  - id: d
+    text: "`in-toto`"
+    explanation: "Not correct. `in-toto` is a statement format."
+  correct_option: b
+  explanation: "Correct. With `kms`, the key stays in the key management service and Chains asks it to sign."
+- id: ats129-010-02-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Plan a key rotation"
+  source_readings:
+  - sections/section-010/module-02/course-04-signers-keys-and-offline-verification.md
+  prompt: "After you rotate the signing key, what must verifiers of old images keep?"
+  options:
+  - id: a
+    text: "Nothing, Chains re-signs old images."
+    explanation: "Not correct. Chains does not re-sign."
+  - id: b
+    text: "The old public key."
+    explanation: "Correct. Old statements verify only against the key that signed them, and Chains never re-signs a handled run."
+  - id: c
+    text: "The new private key."
+    explanation: "Not correct. A private key is never given to verifiers."
+  - id: d
+    text: "The old TaskRuns."
+    explanation: "Not correct. Verification needs the public key, not the runs."
+  correct_option: b
+  explanation: "Correct. Old statements verify only against the key that signed them, and Chains never re-signs a handled run."

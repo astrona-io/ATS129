@@ -1,0 +1,14 @@
+# Reference chains-config: SLSA v1.0 provenance for TaskRuns, stored both in the
+# TaskRun annotations and as an attestation in the registry. The settings of the
+# starting state stay.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chains-config
+  namespace: tekton-chains
+data:
+  artifacts.taskrun.format: slsa/v2alpha4
+  artifacts.taskrun.storage: tekton,oci
+  artifacts.oci.storage: oci
+  transparency.enabled: "false"
+  storage.oci.repository.insecure: "true"

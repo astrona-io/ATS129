@@ -1,0 +1,58 @@
+# Record Failure Ratio And Alert On Stuck TaskRuns
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-129-lab-030-02"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-tekton"
+      description: "Installs the tkn CLI 0.46.2 and Tekton Pipelines v1.17.1, and waits for Prometheus and the client pod"
+      type: "file"
+      source: "bootstrap/01-install-tekton.sh"
+    - name: "ats-129-lab-030-02-setup"
+      description: "Applies the Tasks nightly-check and slow-check, and runs nightly-check once to pass and once to fail"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+  manifests:
+    - name: "lab-start"
+      description: "The namespaces starfleet and monitoring, Prometheus (scraping itself and the Pipelines controller) and the client pod"
+      type: "file"
+      source: "manifests/lab-start.yaml"
+testing:
+  init:
+    - name: "wait-for-tekton"
+      description: "Waits until Tekton and Prometheus are ready"
+      type: "file"
+      source: "testing/wait-for-tekton.sh"
+    - name: "reference-solution"
+      description: "The configuration a correct learner makes; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-recording-rule"
+      description: "Confirms the recording rule tekton:taskrun_failed:ratio is loaded and has a value between 0 and 1"
+      type: "file"
+      source: "validation/validate-recording-rule.sh"
+    - name: "validate-alert-rule"
+      description: "Confirms the alerting rule TektonTooManyRunningTaskRuns is loaded with the right query, for time and label"
+      type: "file"
+      source: "validation/validate-alert-rule.sh"
+    - name: "validate-alert-fires"
+      description: "Starts three long TaskRuns and confirms the alert TektonTooManyRunningTaskRuns fires"
+      type: "file"
+      source: "validation/validate-alert-fires.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - busybox:1.37.0
+      - prom/prometheus:v3.15.1
+      - nicolaka/netshoot:v0.13

@@ -1,4 +1,4 @@
-# Final domain knowledge check across all three sections.
+# Final domain knowledge check across all three sections and all six modules.
 schema_version: 1
 kind: question_bank
 id: ats129-final
@@ -227,3 +227,135 @@ questions:
     explanation: Not correct. The rule is valid. It just matches nothing.
   correct_option: b
   explanation: Correct. Test every alert with a real failure.
+- id: ats129-final-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Pick a SLSA v1.0 format"
+  source_readings:
+  - sections/section-010/module-02/course-01-pick-a-provenance-format.md
+  prompt: "Which `artifacts.taskrun.format` values write SLSA v1.0 provenance?"
+  options:
+  - id: a
+    text: "`in-toto` and `slsa/v1`"
+    explanation: "Not correct. Both write SLSA v0.2."
+  - id: b
+    text: "`slsa/v2alpha3` and `slsa/v2alpha4`"
+    explanation: "Correct. The two `v2alpha` formats write SLSA v1.0; `slsa/v1` is an alias of the SLSA v0.2 `in-toto` format."
+  - id: c
+    text: "`simplesigning`"
+    explanation: "Not correct. `simplesigning` is the image signature format."
+  - id: d
+    text: "`slsa/v1` only"
+    explanation: "Not correct. `slsa/v1` writes SLSA v0.2."
+  correct_option: b
+  explanation: "Correct. The two `v2alpha` formats write SLSA v1.0; `slsa/v1` is an alias of the SLSA v0.2 `in-toto` format."
+- id: ats129-final-q11
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Keep provenance after pruning"
+  source_readings:
+  - sections/section-010/module-02/course-02-choose-where-chains-stores-provenance.md
+  prompt: "Why add `oci` to `artifacts.taskrun.storage` on a cluster that prunes runs?"
+  options:
+  - id: a
+    text: "Annotations are deleted with the run, but the registry attestation stays."
+    explanation: "Correct. The `tekton` backend writes annotations on the run, and the Pruner deletes the run."
+  - id: b
+    text: "`oci` is faster than `tekton`."
+    explanation: "Not correct. Speed is not the reason."
+  - id: c
+    text: "`tekton` storage is not signed."
+    explanation: "Not correct. The annotation payload is signed."
+  - id: d
+    text: "The Pruner requires it."
+    explanation: "Not correct. The Pruner has no such requirement."
+  correct_option: a
+  explanation: "Correct. The `tekton` backend writes annotations on the run, and the Pruner deletes the run."
+- id: ats129-final-q12
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Pick the write path for Tekton settings"
+  source_readings:
+  - sections/section-020/module-02/course-03-reach-any-configmap-and-deployment-with-options.md
+  prompt: "A ConfigMap key of Tekton Pipelines has no field in `spec.pipeline`. How do you set it through the Operator?"
+  options:
+  - id: a
+    text: "Edit the ConfigMap by hand"
+    explanation: "Not correct. The Operator writes the old value back."
+  - id: b
+    text: "Use `spec.pipeline.options.configMaps.<name>.data`"
+    explanation: "Correct. The Operator merges the keys under `options.configMaps.<name>.data` into the ConfigMap it writes."
+  - id: c
+    text: "Use `spec.profile`"
+    explanation: "Not correct. `spec.profile` chooses components."
+  - id: d
+    text: "Delete the ConfigMap"
+    explanation: "Not correct. The Operator creates it again."
+  correct_option: b
+  explanation: "Correct. The Operator merges the keys under `options.configMaps.<name>.data` into the ConfigMap it writes."
+- id: ats129-final-q13
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Know what a profile installs"
+  source_readings:
+  - sections/section-020/module-02/course-01-choose-profiles-and-components.md
+  prompt: "Which profile installs Tekton Pipelines, Triggers and Chains?"
+  options:
+  - id: a
+    text: "`lite`"
+    explanation: "Not correct. `lite` installs Pipelines only."
+  - id: b
+    text: "`basic`"
+    explanation: "Correct. `basic` adds Triggers and Chains to Pipelines, and `all` adds the Dashboard."
+  - id: c
+    text: "`all` only"
+    explanation: "Not correct. `all` installs more, and `basic` fits too."
+  - id: d
+    text: "None of the profiles"
+    explanation: "Not correct. `basic` does."
+  correct_option: b
+  explanation: "Correct. `basic` adds Triggers and Chains to Pipelines, and `all` adds the Dashboard."
+- id: ats129-final-q14
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Record a ratio"
+  source_readings:
+  - sections/section-030/module-02/course-02-precompute-queries-with-recording-rules.md
+  prompt: "What marks a Prometheus rule as a recording rule?"
+  options:
+  - id: a
+    text: "The key `record`, which names the stored series"
+    explanation: "Correct. `record` names the new series and `expr` is the query that fills it."
+  - id: b
+    text: "The key `alert`"
+    explanation: "Not correct. `alert` starts an alerting rule."
+  - id: c
+    text: "The key `for`"
+    explanation: "Not correct. `for` is the pending time of an alert."
+  - id: d
+    text: "The label `severity`"
+    explanation: "Not correct. A label does not decide the kind of rule."
+  correct_option: a
+  explanation: "Correct. `record` names the new series and `expr` is the query that fills it."
+- id: ats129-final-q15
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Cut the series count"
+  source_readings:
+  - sections/section-030/module-02/course-04-keep-the-series-count-under-control.md
+  prompt: "Which block removes a metric by name after the scrape?"
+  options:
+  - id: a
+    text: "`relabel_configs`"
+    explanation: "Not correct. `relabel_configs` runs before the scrape."
+  - id: b
+    text: "`metric_relabel_configs` with `action: drop`"
+    explanation: "Correct. `metric_relabel_configs` runs on each series after the scrape, where the metric name exists."
+  - id: c
+    text: "`rule_files`"
+    explanation: "Not correct. `rule_files` lists rule files."
+  - id: d
+    text: "`global`"
+    explanation: "Not correct. `global` sets defaults."
+  correct_option: b
+  explanation: "Correct. `metric_relabel_configs` runs on each series after the scrape, where the metric name exists."

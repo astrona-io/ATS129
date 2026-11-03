@@ -1,0 +1,15 @@
+apiVersion: operator.tekton.dev/v1alpha1
+kind: TektonConfig
+metadata:
+  name: config
+spec:
+  profile: lite
+  targetNamespace: tekton-pipelines
+  pipeline:
+    enable-api-fields: stable
+    default-timeout-minutes: 30
+    options:
+      configMaps:
+        config-logging:
+          data:
+            loglevel.controller: debug
