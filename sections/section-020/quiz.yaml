@@ -1,0 +1,252 @@
+# Knowledge check for section 020. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats129-020
+course_id: ATS129
+exam_code: TEKTON
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-020
+  title: Operate Tekton With The Operator And The Pruner
+placement:
+  position: after
+  reading: sections/section-020/capstone/labs/lab-01/question.md
+questions:
+- id: ats129-020-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Name the resource you edit in the Operator
+  source_readings:
+  - sections/section-020/module-01/course-01-install-tekton-with-the-operator.md
+  prompt: Which resource do you edit to change the Tekton installation that the Tekton
+    Operator manages?
+  options:
+  - id: a
+    text: The `TektonInstallerSet` of each component.
+    explanation: Not correct. Installer sets track what the Operator applied. You
+      do not edit them.
+  - id: b
+    text: The `TektonConfig` named `config`.
+    explanation: Correct. The Operator works with one `TektonConfig`.
+  - id: c
+    text: The ConfigMap `feature-flags` in `tekton-pipelines`.
+    explanation: Not correct. The Operator owns it and writes it back.
+  - id: d
+    text: The Deployment `tekton-operator`.
+    explanation: Not correct. It runs the Operator and does not hold the Tekton settings.
+  correct_option: b
+  explanation: Correct. The Operator works with one `TektonConfig`.
+- id: ats129-020-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Combine a TTL with history limits
+  source_readings:
+  - sections/section-020/module-01/course-03-time-based-pruning-and-namespaces.md
+  prompt: A namespace sets both `ttlSecondsAfterFinished` and `successfulHistoryLimit`.
+    When does the Pruner delete a run?
+  options:
+  - id: a
+    text: Only when both rules say so.
+    explanation: Not correct. Either rule is enough.
+  - id: b
+    text: Only by the TTL, which replaces the history limit.
+    explanation: Not correct. Both rules stay active.
+  - id: c
+    text: When either rule says so.
+    explanation: Correct. The TTL and the history limits work independently.
+  - id: d
+    text: Only by the history limit, because it is checked first.
+    explanation: Not correct. The TTL deletes old runs even when fewer than the limit
+      remain.
+  correct_option: c
+  explanation: Correct. The TTL and the history limits work independently.
+- id: ats129-020-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Change a setting under the Operator
+  source_readings:
+  - sections/section-020/module-01/course-01-install-tekton-with-the-operator.md
+  prompt: You change `enable-api-fields` by hand in the ConfigMap `feature-flags`.
+    What happens?
+  options:
+  - id: a
+    text: The change stays, because the ConfigMap is the source of truth.
+    explanation: Not correct. The Operator owns the ConfigMap.
+  - id: b
+    text: The Operator deletes the ConfigMap.
+    explanation: Not correct. It writes the value from the `TektonConfig` back.
+  - id: c
+    text: The Operator refuses to start until the change is removed.
+    explanation: Not correct. It keeps running and overwrites the value.
+  - id: d
+    text: The Operator puts the value from the `TektonConfig` back when it reconciles.
+    explanation: Correct. Change the `TektonConfig` instead.
+  correct_option: d
+  explanation: Correct. Change the `TektonConfig` instead.
+- id: ats129-020-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain an Operator upgrade
+  source_readings:
+  - sections/section-020/module-01/course-01-install-tekton-with-the-operator.md
+  prompt: How do you move to a newer version of Tekton Pipelines with the Operator?
+  options:
+  - id: a
+    text: Apply the release manifest of a newer Operator, which ships its own component
+      versions.
+    explanation: Correct. The `TektonConfig` and its settings stay as they are.
+  - id: b
+    text: Set the Pipelines version in the `TektonConfig`.
+    explanation: Not correct. You choose an Operator version, not a Pipelines version.
+  - id: c
+    text: Apply the Pipelines `release.yaml` on top of the installation.
+    explanation: Not correct. That gives two owners for the same objects.
+  - id: d
+    text: Delete the `TektonConfig` and create it again.
+    explanation: Not correct. An upgrade keeps the `TektonConfig`.
+  correct_option: a
+  explanation: Correct. The `TektonConfig` and its settings stay as they are.
+- id: ats129-020-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Enable the event-based Pruner
+  source_readings:
+  - sections/section-020/module-01/course-02-history-based-pruning.md
+  prompt: The Operator refuses `spec.tektonpruner`. Which setting must you add?
+  options:
+  - id: a
+    text: "`spec.tektonpruner.enforcedConfigLevel: namespace`."
+    explanation: Not correct. That key sets who owns the rules, not whether the Operator
+      accepts the Pruner.
+  - id: b
+    text: "`spec.profile: all`."
+    explanation: Not correct. The profile does not remove the conflict between the
+      pruners.
+  - id: c
+    text: "`spec.targetNamespace: tekton-pruner`."
+    explanation: Not correct. The target namespace stays `tekton-pipelines`.
+  - id: d
+    text: "`spec.pruner.disabled: true`, because the Operator does not allow both
+      pruners."
+    explanation: Correct. `spec.pruner` is the job-based pruner.
+  correct_option: d
+  explanation: Correct. `spec.pruner` is the job-based pruner.
+- id: ats129-020-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Read the meaning of historyLimit
+  source_readings:
+  - sections/section-020/module-01/course-02-history-based-pruning.md
+  prompt: 'A namespace sets `historyLimit: 3` and no other history key. How many runs
+    can stay?'
+  options:
+  - id: a
+    text: 3 runs in total.
+    explanation: Not correct. It is not a total.
+  - id: b
+    text: Up to 3 successful and up to 3 failed runs.
+    explanation: Correct. `historyLimit` counts per status.
+  - id: c
+    text: 3 successful runs and no failed runs.
+    explanation: Not correct. It also applies to failed runs.
+  - id: d
+    text: Every run younger than 3 days.
+    explanation: Not correct. `historyLimit` counts runs, not days.
+  correct_option: b
+  explanation: Correct. `historyLimit` counts per status.
+- id: ats129-020-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Predict when a lowered limit applies
+  source_readings:
+  - sections/section-020/module-01/course-02-history-based-pruning.md
+  prompt: You lower `successfulHistoryLimit` from 5 to 2. When does the Pruner delete
+    the extra successful runs?
+  options:
+  - id: a
+    text: The next time a successful run in that namespace finishes.
+    explanation: Correct. The Pruner reacts to events, not to the change.
+  - id: b
+    text: At once, when the Operator writes the new value.
+    explanation: Not correct. The Pruner acts when a run finishes.
+  - id: c
+    text: After the next restart of the Tekton Pipelines controller.
+    explanation: Not correct. The Pruner controller does the work, and it needs an
+      event.
+  - id: d
+    text: Never, because limits apply only to new namespaces.
+    explanation: Not correct. The new limit applies to existing runs at the next event.
+  correct_option: a
+  explanation: Correct. The Pruner reacts to events, not to the change.
+- id: ats129-020-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain enforcedConfigLevel
+  source_readings:
+  - sections/section-020/module-01/course-03-time-based-pruning-and-namespaces.md
+  prompt: 'The global configuration has `enforcedConfigLevel: global`. The `starfleet`
+    team creates its own namespace ConfigMap. What does the Pruner do with it?'
+  options:
+  - id: a
+    text: It uses it and ignores the global values.
+    explanation: Not correct. That needs `namespace`.
+  - id: b
+    text: It merges both and takes the larger limit.
+    explanation: Not correct. The Pruner does not merge under `global`.
+  - id: c
+    text: It ignores it. Only the global configuration counts.
+    explanation: Correct. Set `namespace` first so namespace rules count.
+  - id: d
+    text: It refuses it and the API server returns an error.
+    explanation: Not correct. The ConfigMap is valid, and the Pruner ignores it.
+  correct_option: c
+  explanation: Correct. Set `namespace` first so namespace rules count.
+- id: ats129-020-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Name the namespace ConfigMap
+  source_readings:
+  - sections/section-020/module-01/course-03-time-based-pruning-and-namespaces.md
+  prompt: Which ConfigMap name and data key does the Pruner read for namespace rules?
+  options:
+  - id: a
+    text: The name `tekton-pruner-namespace-spec` with the key `ns-config`.
+    explanation: Correct. Any other name is ignored without an error.
+  - id: b
+    text: The name `tekton-pruner-default-spec` with the key `ns-config`.
+    explanation: Not correct. That name is the global ConfigMap.
+  - id: c
+    text: The name `tekton-pruner-namespace-config` with the key `global-config`.
+    explanation: Not correct. This name is ignored and `global-config` is the global
+      key.
+  - id: d
+    text: The name `config-pruner` with the key `ttl`.
+    explanation: Not correct. The Pruner does not read this.
+  correct_option: a
+  explanation: Correct. Any other name is ignored without an error.
+- id: ats129-020-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Understand the webhook failure policy
+  source_readings:
+  - sections/section-020/module-01/course-03-time-based-pruning-and-namespaces.md
+  prompt: 'The Pruner webhook pod is down and has `failurePolicy: Fail`. What happens
+    when you apply a ConfigMap with the two Pruner labels?'
+  options:
+  - id: a
+    text: The API server accepts it and skips the check.
+    explanation: 'Not correct. That would be `failurePolicy: Ignore`.'
+  - id: b
+    text: The Pruner controller applies it without validation.
+    explanation: Not correct. The API server refuses it first.
+  - id: c
+    text: The Operator restarts the webhook and accepts it.
+    explanation: Not correct. The API server does not wait for a restart.
+  - id: d
+    text: The API server refuses the change until the webhook runs again.
+    explanation: Correct. This is the price of the protection.
+  correct_option: d
+  explanation: Correct. This is the price of the protection.

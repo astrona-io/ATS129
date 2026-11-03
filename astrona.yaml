@@ -134,6 +134,10 @@ modules:
             url: https://tekton.dev/docs/chains/signing/
           - name: "Chains and Sigstore"
             url: https://tekton.dev/docs/chains/sigstore/
+      - type: quiz
+        title: "Knowledge Check: Sign And Attest Builds With Tekton Chains"
+        path: sections/section-010/quiz.yaml
+        pass_score: 70
 
   - id: module-020
     title: "Operate Tekton With The Operator And The Pruner"
@@ -207,6 +211,10 @@ modules:
             url: https://tekton.dev/docs/operator/tektonpruner/
           - name: "TektonConfig"
             url: https://tekton.dev/docs/operator/tektonconfig/
+      - type: quiz
+        title: "Knowledge Check: Operate Tekton With The Operator And The Pruner"
+        path: sections/section-020/quiz.yaml
+        pass_score: 70
 
   - id: module-030
     title: "Monitor Tekton With Prometheus"
@@ -276,3 +284,11 @@ modules:
             url: https://tekton.dev/docs/pipelines/metrics/
           - name: "Additional configuration options"
             url: https://tekton.dev/docs/pipelines/additional-configs/
+      - type: quiz
+        title: "Knowledge Check: Monitor Tekton With Prometheus"
+        path: sections/section-030/quiz.yaml
+        pass_score: 70
+      - type: quiz
+        title: "Final Domain Quiz"
+        path: sections/final-domain-quiz.yaml
+        pass_score: 70

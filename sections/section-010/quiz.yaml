@@ -1,0 +1,256 @@
+# Knowledge check for section 010. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats129-010
+course_id: ATS129
+exam_code: TEKTON
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-010
+  title: Sign And Attest Builds With Tekton Chains
+placement:
+  position: after
+  reading: sections/section-010/capstone/labs/lab-01/question.md
+questions:
+- id: ats129-010-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Explain why Chains is non-blocking
+  source_readings:
+  - sections/section-010/module-01/course-01-how-chains-works.md
+  prompt: A TaskRun succeeds and Tekton Chains then fails to sign it. What happens
+    to the status of the TaskRun?
+  options:
+  - id: a
+    text: It does not change, because Chains starts only after the run has ended and
+      cannot change the result.
+    explanation: Correct. A signing problem never shows on the run's status.
+  - id: b
+    text: The run turns to `Failed`.
+    explanation: Not correct. Chains works after the run ended and does not change
+      its result.
+  - id: c
+    text: The run turns to `Unknown` until a key exists.
+    explanation: Not correct. The run is already finished when Chains starts.
+  - id: d
+    text: The run is deleted by the controller.
+    explanation: Not correct. Chains never deletes a run.
+  correct_option: a
+  explanation: Correct. A signing problem never shows on the run's status.
+- id: ats129-010-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Recognise a run marked as signed without a signer
+  source_readings:
+  - sections/section-010/module-01/course-01-how-chains-works.md
+  prompt: Chains v0.29.9 has an empty `signing-secrets`. What does the controller
+    do with a finished TaskRun?
+  options:
+  - id: a
+    text: 'It sets `chains.tekton.dev/signed: "failed"` at once.'
+    explanation: Not correct. `failed` is set only after retries of the storage step
+      fail.
+  - id: b
+    text: 'It skips the signing step, logs that no signer is found, and still sets
+      `chains.tekton.dev/signed: "true"`.'
+    explanation: Correct. A missing signer is not an error in this version.
+  - id: c
+    text: It creates a new cosign key pair by itself.
+    explanation: Not correct. Chains never creates a key pair.
+  - id: d
+    text: It leaves the run without any `chains.tekton.dev` annotation.
+    explanation: Not correct. The run is still marked as signed.
+  correct_option: b
+  explanation: Correct. A missing signer is not an error in this version.
+- id: ats129-010-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Name the keys of a cosign signing Secret
+  source_readings:
+  - sections/section-010/module-01/course-01-how-chains-works.md
+  prompt: Which three keys does the cosign key pair in the Secret `signing-secrets`
+    hold?
+  options:
+  - id: a
+    text: "`tls.crt`, `tls.key` and `ca.crt`."
+    explanation: Not correct. These are the keys of a TLS Secret.
+  - id: b
+    text: "`cosign.pem`, `cosign.token` and `cosign.log`."
+    explanation: Not correct. Chains does not read keys with these names.
+  - id: c
+    text: "`cosign.key`, `cosign.password` and `cosign.pub`."
+    explanation: Correct. These are the private key, its password and the public key.
+  - id: d
+    text: "`x509.pub`, `rekor.key` and `fulcio.crt`."
+    explanation: Not correct. Those are not the keys of the cosign Secret.
+  correct_option: c
+  explanation: Correct. These are the private key, its password and the public key.
+- id: ats129-010-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain when Chains handles a run
+  source_readings:
+  - sections/section-010/module-01/course-01-how-chains-works.md
+  prompt: You add a key to `signing-secrets` after a TaskRun was already marked as
+    signed without a signature. How do you get a signature for that work?
+  options:
+  - id: a
+    text: Delete the annotation `chains.tekton.dev/signed` from the old run and wait.
+    explanation: Not correct. Chains does not look at a handled run again.
+  - id: b
+    text: Wait one minute until the Secret volume refreshes, and Chains signs the
+      old run.
+    explanation: Not correct. The refresh only helps runs that Chains has not handled
+      yet.
+  - id: c
+    text: Run `cosign verify`, which signs the image if no signature exists.
+    explanation: Not correct. `cosign verify` only checks signatures.
+  - id: d
+    text: Start a new run, because Chains handles each run only once.
+    explanation: Correct. The old run stays unsigned.
+  correct_option: d
+  explanation: Correct. The old run stays unsigned.
+- id: ats129-010-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Use type hinting for one image
+  source_readings:
+  - sections/section-010/module-01/course-02-sign-images-and-store-attestations.md
+  prompt: Which result names make Chains treat a Task as having built one image?
+  options:
+  - id: a
+    text: Results named `url` and `digest`.
+    explanation: Not correct. These names mean nothing to Chains.
+  - id: b
+    text: Results whose names end in `IMAGE_URL` and `IMAGE_DIGEST`.
+    explanation: Correct. Chains builds `<IMAGE_URL>@<IMAGE_DIGEST>` from them.
+  - id: c
+    text: Results named `CHAINS-GIT_URL` and `CHAINS-GIT_COMMIT`.
+    explanation: Not correct. These describe the source inputs.
+  - id: d
+    text: Any result that holds a registry host name.
+    explanation: Not correct. Chains looks for known result names.
+  correct_option: b
+  explanation: Correct. Chains builds `<IMAGE_URL>@<IMAGE_DIGEST>` from them.
+- id: ats129-010-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Find the effect of a wrong digest
+  source_readings:
+  - sections/section-010/module-01/course-02-sign-images-and-store-attestations.md
+  prompt: A Task writes `IMAGE_DIGEST` as 64 hexadecimal characters without the prefix
+    `sha256:`. What does Chains do?
+  options:
+  - id: a
+    text: It adds the prefix `sha256:` itself and signs the image.
+    explanation: Not correct. Chains does not repair the digest.
+  - id: b
+    text: It fails the TaskRun.
+    explanation: Not correct. Chains never changes the run status.
+  - id: c
+    text: It signs the image by its tag instead.
+    explanation: Not correct. Chains signs a reference with a digest.
+  - id: d
+    text: It cannot build a valid reference, skips the image and still marks the run
+      as signed.
+    explanation: Correct. The result is a signed run with no signature in the registry.
+  correct_option: d
+  explanation: Correct. The result is a signed run with no signature in the registry.
+- id: ats129-010-q07
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Map formats to SLSA versions
+  source_readings:
+  - sections/section-010/module-01/course-02-sign-images-and-store-attestations.md
+  prompt: Which `artifacts.taskrun.format` value writes SLSA v1.0 provenance?
+  options:
+  - id: a
+    text: "`slsa/v2alpha4`."
+    explanation: Correct. `slsa/v2alpha3` and `slsa/v2alpha4` write SLSA v1.0.
+  - id: b
+    text: "`in-toto`."
+    explanation: Not correct. `in-toto` writes SLSA v0.2.
+  - id: c
+    text: "`slsa/v1`."
+    explanation: Not correct. `slsa/v1` is an alias for the SLSA v0.2 format.
+  - id: d
+    text: "`oci`."
+    explanation: Not correct. `oci` is a storage value, not a format.
+  correct_option: a
+  explanation: Correct. `slsa/v2alpha3` and `slsa/v2alpha4` write SLSA v1.0.
+- id: ats129-010-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Verify an attestation with cosign
+  source_readings:
+  - sections/section-010/module-01/course-02-sign-images-and-store-attestations.md
+  prompt: You stored SLSA v1.0 provenance in the registry. Which `--type` do you pass
+    to `cosign verify-attestation`?
+  options:
+  - id: a
+    text: "`slsaprovenance`."
+    explanation: Not correct. This type matches SLSA v0.2 provenance.
+  - id: b
+    text: "`custom`."
+    explanation: Not correct. The predicate is SLSA provenance, not a custom type.
+  - id: c
+    text: "`slsaprovenance1`."
+    explanation: Correct. For the SLSA v0.2 formats you pass `slsaprovenance`.
+  - id: d
+    text: "`vuln`."
+    explanation: Not correct. The attestation holds provenance, not a vulnerability
+      report.
+  correct_option: c
+  explanation: Correct. For the SLSA v0.2 formats you pass `slsaprovenance`.
+- id: ats129-010-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain keyless signing
+  source_readings:
+  - sections/section-010/module-01/course-03-keyless-signing-and-failures.md
+  prompt: What does Fulcio give a keyless signer?
+  options:
+  - id: a
+    text: A long-lived private key stored in `signing-secrets`.
+    explanation: Not correct. Keyless signing removes the long-lived key.
+  - id: b
+    text: A record of the signature in a public log.
+    explanation: Not correct. That is the job of Rekor.
+  - id: c
+    text: A short-lived certificate for an OpenID Connect identity, valid for about
+      ten minutes.
+    explanation: Correct. The signer then throws its private key away.
+  - id: d
+    text: The public key that `cosign verify --key` needs.
+    explanation: Not correct. A keyless verifier checks a certificate identity and
+      issuer instead.
+  correct_option: c
+  explanation: Correct. The signer then throws its private key away.
+- id: ats129-010-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Read the failure of a registry push
+  source_readings:
+  - sections/section-010/module-01/course-03-keyless-signing-and-failures.md
+  prompt: The registry is unreachable by HTTPS and `storage.oci.repository.insecure`
+    is not set. What does Chains finally do with the run?
+  options:
+  - id: a
+    text: 'It counts retries in `chains.tekton.dev/retries`, then sets `chains.tekton.dev/signed:
+      "failed"` and never tries that run again.'
+    explanation: Correct. The push error is in the controller log.
+  - id: b
+    text: It retries forever until the registry answers.
+    explanation: Not correct. After three retries it gives up.
+  - id: c
+    text: 'It sets `signed: "true"` and stores the payload on the TaskRun.'
+    explanation: Not correct. `true` is only set when the stored steps worked or no
+      signer exists.
+  - id: d
+    text: It turns the TaskRun into `Failed`.
+    explanation: Not correct. Chains never changes the run status.
+  correct_option: a
+  explanation: Correct. The push error is in the controller log.

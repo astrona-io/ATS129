@@ -1,0 +1,250 @@
+# Knowledge check for section 030. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats129-030
+course_id: ATS129
+exam_code: TEKTON
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-030
+  title: Monitor Tekton With Prometheus
+placement:
+  position: after
+  reading: sections/section-030/capstone/labs/lab-01/question.md
+questions:
+- id: ats129-030-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Find the metrics port
+  source_readings:
+  - sections/section-030/module-01/course-01-the-metrics-tekton-exposes.md
+  prompt: Which port of the Service `tekton-pipelines-controller` serves metrics?
+  options:
+  - id: a
+    text: "`probes`, port `8080`."
+    explanation: Not correct. This port serves health probes.
+  - id: b
+    text: "`http-profiling`, port `8008`."
+    explanation: Not correct. This port serves profiling data.
+  - id: c
+    text: "`http-metrics`, port `9090`."
+    explanation: Correct. It serves the Prometheus text format.
+  - id: d
+    text: "`https`, port `443`."
+    explanation: Not correct. The controller Service has no such port.
+  correct_option: c
+  explanation: Correct. It serves the Prometheus text format.
+- id: ats129-030-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Read the metrics protocol
+  source_readings:
+  - sections/section-030/module-01/course-01-the-metrics-tekton-exposes.md
+  prompt: 'The ConfigMap `config-observability` has `metrics-protocol: none`. What
+    does the controller do?'
+  options:
+  - id: a
+    text: It serves `/metrics` on port `9090`.
+    explanation: Not correct. That is the value `prometheus`.
+  - id: b
+    text: It pushes metrics to a collector over OTLP gRPC.
+    explanation: Not correct. That is the value `grpc`.
+  - id: c
+    text: It serves metrics without the label `task`.
+    explanation: Not correct. The level keys decide the labels.
+  - id: d
+    text: It exports no metrics, so a Prometheus scrape finds nothing.
+    explanation: Correct. `prometheus` is the value that serves `/metrics`.
+  correct_option: d
+  explanation: Correct. `prometheus` is the value that serves `/metrics`.
+- id: ats129-030-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Know the status label values
+  source_readings:
+  - sections/section-030/module-01/course-01-the-metrics-tekton-exposes.md
+  prompt: Which values does the controller write in the label `status` of `tekton_pipelines_controller_taskrun_total`?
+  options:
+  - id: a
+    text: "`success`, `failed` and `cancelled`."
+    explanation: Correct. Other spellings never appear.
+  - id: b
+    text: "`Succeeded`, `Failed` and `Unknown`."
+    explanation: Not correct. These are condition values, not metric label values.
+  - id: c
+    text: "`success`, `failure` and `error`."
+    explanation: Not correct. `failure` never appears.
+  - id: d
+    text: "`pass`, `fail` and `skip`."
+    explanation: Not correct. Tekton does not use these.
+  correct_option: a
+  explanation: Correct. Other spellings never appear.
+- id: ats129-030-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Judge the cost of run-level metrics
+  source_readings:
+  - sections/section-030/module-01/course-01-the-metrics-tekton-exposes.md
+  prompt: 'Why must you not set `metrics.taskrun.level: taskrun` in a real cluster?'
+  options:
+  - id: a
+    text: It turns the controller metrics off.
+    explanation: 'Not correct. Only `metrics-protocol: none` does that.'
+  - id: b
+    text: It adds the run name as a label, so every run creates a new series that
+      fills the monitoring storage.
+    explanation: Correct. The default level is `task`.
+  - id: c
+    text: It makes counters reset at every run.
+    explanation: Not correct. Counters reset when the controller restarts.
+  - id: d
+    text: It moves the metrics to port `8080`.
+    explanation: Not correct. The port does not change.
+  correct_option: b
+  explanation: Correct. The default level is `task`.
+- id: ats129-030-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose a stable scrape target
+  source_readings:
+  - sections/section-030/module-01/course-02-scrape-tekton-with-prometheus.md
+  prompt: How should a Prometheus scrape job point at the Tekton Pipelines controller?
+  options:
+  - id: a
+    text: At the Service name, such as `tekton-pipelines-controller.tekton-pipelines.svc:9090`.
+    explanation: Correct. A pod IP address changes with every restart.
+  - id: b
+    text: At the pod IP address.
+    explanation: Not correct. It changes with every restart of the controller.
+  - id: c
+    text: At port `8080` of the Service.
+    explanation: Not correct. Port `8080` serves probes.
+  - id: d
+    text: At the Chains Service `tekton-chains-metrics`.
+    explanation: Not correct. That Service serves the Chains controller metrics.
+  correct_option: a
+  explanation: Correct. A pod IP address changes with every restart.
+- id: ats129-030-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Load a changed Prometheus file
+  source_readings:
+  - sections/section-030/module-01/course-02-scrape-tekton-with-prometheus.md
+  prompt: You apply a new `prometheus-config` ConfigMap in the playground. Prometheus
+    shows no change. What is missing?
+  options:
+  - id: a
+    text: A restart of the Tekton Pipelines controller.
+    explanation: Not correct. The controller does not read the Prometheus files.
+  - id: b
+    text: A new `PrometheusRule` resource.
+    explanation: Not correct. The playground has no Prometheus Operator.
+  - id: c
+    text: A restart of the Prometheus Deployment, because this Prometheus reads its
+      files only at start.
+    explanation: Correct. `kubectl rollout restart deployment/prometheus -n monitoring`
+      does it.
+  - id: d
+    text: A new scrape interval of one second.
+    explanation: Not correct. The interval does not load files.
+  correct_option: c
+  explanation: Correct. `kubectl rollout restart deployment/prometheus -n monitoring`
+    does it.
+- id: ats129-030-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Query a counter over time
+  source_readings:
+  - sections/section-030/module-01/course-02-scrape-tekton-with-prometheus.md
+  prompt: Why do you use `rate` or `increase` over a time window on `tekton_pipelines_controller_taskrun_total`?
+  options:
+  - id: a
+    text: The metric is a gauge that goes up and down.
+    explanation: Not correct. It is a counter.
+  - id: b
+    text: A counter starts again at zero when the controller restarts, and both functions
+      handle that reset.
+    explanation: Correct. The raw value is not a trend.
+  - id: c
+    text: Prometheus deletes raw samples after one scrape.
+    explanation: Not correct. Prometheus keeps the samples.
+  - id: d
+    text: The metric has no `status` label otherwise.
+    explanation: Not correct. The label is always there.
+  correct_option: b
+  explanation: Correct. The raw value is not a trend.
+- id: ats129-030-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Describe the pending state
+  source_readings:
+  - sections/section-030/module-01/course-03-alert-on-failed-taskruns.md
+  prompt: 'An alert rule has `for: 2m`. The expression has been true for 30 seconds.
+    What state is the alert in?'
+  options:
+  - id: a
+    text: "`firing`."
+    explanation: Not correct. `firing` needs the full two minutes.
+  - id: b
+    text: "`inactive`."
+    explanation: Not correct. `inactive` means the expression returns nothing.
+  - id: c
+    text: "`resolved`."
+    explanation: Not correct. Prometheus alert rules have no such state.
+  - id: d
+    text: "`pending`."
+    explanation: Correct. It fires only after the expression stays true for the whole
+      `for` time.
+  correct_option: d
+  explanation: Correct. It fires only after the expression stays true for the whole
+    `for` time.
+- id: ats129-030-q09
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Find a selector that never matches
+  source_readings:
+  - sections/section-030/module-01/course-03-alert-on-failed-taskruns.md
+  prompt: An alert uses `tekton_pipelines_controller_taskrun_total{status="failure"}`.
+    What does it do when TaskRuns fail?
+  options:
+  - id: a
+    text: It fires one scrape late.
+    explanation: Not correct. The selector never matches.
+  - id: b
+    text: It stays `inactive`, because the controller writes `failed`, not `failure`.
+    explanation: Correct. Test every alert with a real failure.
+  - id: c
+    text: It fires, because Prometheus matches labels case-insensitively.
+    explanation: Not correct. Label matching is exact.
+  - id: d
+    text: Prometheus rejects the rule file at start.
+    explanation: Not correct. The rule is valid. It just matches nothing.
+  correct_option: b
+  explanation: Correct. Test every alert with a real failure.
+- id: ats129-030-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Know the limit of increase on a new series
+  source_readings:
+  - sections/section-030/module-01/course-03-alert-on-failed-taskruns.md
+  prompt: Why can a rule with `increase(...[10m]) > 0` miss the first failure after
+    a controller start?
+  options:
+  - id: a
+    text: The series is created with the value `1`, so there is no increase inside
+      its window.
+    explanation: Correct. The plain counter does not miss it.
+  - id: b
+    text: The counter starts at `-1` and needs two scrapes.
+    explanation: Not correct. Counters never go below zero.
+  - id: c
+    text: "`increase` works only on gauges."
+    explanation: Not correct. It is a function for counters.
+  - id: d
+    text: The controller does not count the first failure.
+    explanation: Not correct. It counts every failure.
+  correct_option: a
+  explanation: Correct. The plain counter does not miss it.

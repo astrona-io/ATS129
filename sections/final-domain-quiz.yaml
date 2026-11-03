@@ -1,0 +1,229 @@
+# Final domain knowledge check across all three sections.
+schema_version: 1
+kind: question_bank
+id: ats129-final
+course_id: ATS129
+exam_code: TEKTON
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: domain
+  id: supply-chain-security-operations
+  title: Supply Chain Security With Chains & Operations
+questions:
+- id: ats129-final-q01
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Recognise a run marked as signed without a signer
+  source_readings:
+  - sections/section-010/module-01/course-01-how-chains-works.md
+  prompt: Chains v0.29.9 has an empty `signing-secrets`. What does the controller
+    do with a finished TaskRun?
+  options:
+  - id: a
+    text: 'It sets `chains.tekton.dev/signed: "failed"` at once.'
+    explanation: Not correct. `failed` is set only after retries of the storage step
+      fail.
+  - id: b
+    text: 'It skips the signing step, logs that no signer is found, and still sets
+      `chains.tekton.dev/signed: "true"`.'
+    explanation: Correct. A missing signer is not an error in this version.
+  - id: c
+    text: It creates a new cosign key pair by itself.
+    explanation: Not correct. Chains never creates a key pair.
+  - id: d
+    text: It leaves the run without any `chains.tekton.dev` annotation.
+    explanation: Not correct. The run is still marked as signed.
+  correct_option: b
+  explanation: Correct. A missing signer is not an error in this version.
+- id: ats129-final-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Verify an attestation with cosign
+  source_readings:
+  - sections/section-010/module-01/course-02-sign-images-and-store-attestations.md
+  prompt: You stored SLSA v1.0 provenance in the registry. Which `--type` do you pass
+    to `cosign verify-attestation`?
+  options:
+  - id: a
+    text: "`slsaprovenance`."
+    explanation: Not correct. This type matches SLSA v0.2 provenance.
+  - id: b
+    text: "`custom`."
+    explanation: Not correct. The predicate is SLSA provenance, not a custom type.
+  - id: c
+    text: "`slsaprovenance1`."
+    explanation: Correct. For the SLSA v0.2 formats you pass `slsaprovenance`.
+  - id: d
+    text: "`vuln`."
+    explanation: Not correct. The attestation holds provenance, not a vulnerability
+      report.
+  correct_option: c
+  explanation: Correct. For the SLSA v0.2 formats you pass `slsaprovenance`.
+- id: ats129-final-q03
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Read the failure of a registry push
+  source_readings:
+  - sections/section-010/module-01/course-03-keyless-signing-and-failures.md
+  prompt: The registry is unreachable by HTTPS and `storage.oci.repository.insecure`
+    is not set. What does Chains finally do with the run?
+  options:
+  - id: a
+    text: 'It counts retries in `chains.tekton.dev/retries`, then sets `chains.tekton.dev/signed:
+      "failed"` and never tries that run again.'
+    explanation: Correct. The push error is in the controller log.
+  - id: b
+    text: It retries forever until the registry answers.
+    explanation: Not correct. After three retries it gives up.
+  - id: c
+    text: 'It sets `signed: "true"` and stores the payload on the TaskRun.'
+    explanation: Not correct. `true` is only set when the stored steps worked or no
+      signer exists.
+  - id: d
+    text: It turns the TaskRun into `Failed`.
+    explanation: Not correct. Chains never changes the run status.
+  correct_option: a
+  explanation: Correct. The push error is in the controller log.
+- id: ats129-final-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Combine a TTL with history limits
+  source_readings:
+  - sections/section-020/module-01/course-03-time-based-pruning-and-namespaces.md
+  prompt: A namespace sets both `ttlSecondsAfterFinished` and `successfulHistoryLimit`.
+    When does the Pruner delete a run?
+  options:
+  - id: a
+    text: Only when both rules say so.
+    explanation: Not correct. Either rule is enough.
+  - id: b
+    text: Only by the TTL, which replaces the history limit.
+    explanation: Not correct. Both rules stay active.
+  - id: c
+    text: When either rule says so.
+    explanation: Correct. The TTL and the history limits work independently.
+  - id: d
+    text: Only by the history limit, because it is checked first.
+    explanation: Not correct. The TTL deletes old runs even when fewer than the limit
+      remain.
+  correct_option: c
+  explanation: Correct. The TTL and the history limits work independently.
+- id: ats129-final-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain enforcedConfigLevel
+  source_readings:
+  - sections/section-020/module-01/course-03-time-based-pruning-and-namespaces.md
+  prompt: 'The global configuration has `enforcedConfigLevel: global`. The `starfleet`
+    team creates its own namespace ConfigMap. What does the Pruner do with it?'
+  options:
+  - id: a
+    text: It uses it and ignores the global values.
+    explanation: Not correct. That needs `namespace`.
+  - id: b
+    text: It merges both and takes the larger limit.
+    explanation: Not correct. The Pruner does not merge under `global`.
+  - id: c
+    text: It ignores it. Only the global configuration counts.
+    explanation: Correct. Set `namespace` first so namespace rules count.
+  - id: d
+    text: It refuses it and the API server returns an error.
+    explanation: Not correct. The ConfigMap is valid, and the Pruner ignores it.
+  correct_option: c
+  explanation: Correct. Set `namespace` first so namespace rules count.
+- id: ats129-final-q06
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Understand the webhook failure policy
+  source_readings:
+  - sections/section-020/module-01/course-03-time-based-pruning-and-namespaces.md
+  prompt: 'The Pruner webhook pod is down and has `failurePolicy: Fail`. What happens
+    when you apply a ConfigMap with the two Pruner labels?'
+  options:
+  - id: a
+    text: The API server accepts it and skips the check.
+    explanation: 'Not correct. That would be `failurePolicy: Ignore`.'
+  - id: b
+    text: The Pruner controller applies it without validation.
+    explanation: Not correct. The API server refuses it first.
+  - id: c
+    text: The Operator restarts the webhook and accepts it.
+    explanation: Not correct. The API server does not wait for a restart.
+  - id: d
+    text: The API server refuses the change until the webhook runs again.
+    explanation: Correct. This is the price of the protection.
+  correct_option: d
+  explanation: Correct. This is the price of the protection.
+- id: ats129-final-q07
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Know the status label values
+  source_readings:
+  - sections/section-030/module-01/course-01-the-metrics-tekton-exposes.md
+  prompt: Which values does the controller write in the label `status` of `tekton_pipelines_controller_taskrun_total`?
+  options:
+  - id: a
+    text: "`success`, `failed` and `cancelled`."
+    explanation: Correct. Other spellings never appear.
+  - id: b
+    text: "`Succeeded`, `Failed` and `Unknown`."
+    explanation: Not correct. These are condition values, not metric label values.
+  - id: c
+    text: "`success`, `failure` and `error`."
+    explanation: Not correct. `failure` never appears.
+  - id: d
+    text: "`pass`, `fail` and `skip`."
+    explanation: Not correct. Tekton does not use these.
+  correct_option: a
+  explanation: Correct. Other spellings never appear.
+- id: ats129-final-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Load a changed Prometheus file
+  source_readings:
+  - sections/section-030/module-01/course-02-scrape-tekton-with-prometheus.md
+  prompt: You apply a new `prometheus-config` ConfigMap in the playground. Prometheus
+    shows no change. What is missing?
+  options:
+  - id: a
+    text: A restart of the Tekton Pipelines controller.
+    explanation: Not correct. The controller does not read the Prometheus files.
+  - id: b
+    text: A new `PrometheusRule` resource.
+    explanation: Not correct. The playground has no Prometheus Operator.
+  - id: c
+    text: A restart of the Prometheus Deployment, because this Prometheus reads its
+      files only at start.
+    explanation: Correct. `kubectl rollout restart deployment/prometheus -n monitoring`
+      does it.
+  - id: d
+    text: A new scrape interval of one second.
+    explanation: Not correct. The interval does not load files.
+  correct_option: c
+  explanation: Correct. `kubectl rollout restart deployment/prometheus -n monitoring`
+    does it.
+- id: ats129-final-q09
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Find a selector that never matches
+  source_readings:
+  - sections/section-030/module-01/course-03-alert-on-failed-taskruns.md
+  prompt: An alert uses `tekton_pipelines_controller_taskrun_total{status="failure"}`.
+    What does it do when TaskRuns fail?
+  options:
+  - id: a
+    text: It fires one scrape late.
+    explanation: Not correct. The selector never matches.
+  - id: b
+    text: It stays `inactive`, because the controller writes `failed`, not `failure`.
+    explanation: Correct. Test every alert with a real failure.
+  - id: c
+    text: It fires, because Prometheus matches labels case-insensitively.
+    explanation: Not correct. Label matching is exact.
+  - id: d
+    text: Prometheus rejects the rule file at start.
+    explanation: Not correct. The rule is valid. It just matches nothing.
+  correct_option: b
+  explanation: Correct. Test every alert with a real failure.
