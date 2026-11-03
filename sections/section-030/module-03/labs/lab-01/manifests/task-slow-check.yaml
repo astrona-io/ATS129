@@ -1,0 +1,19 @@
+# A one-step Task that sleeps for the number of seconds in the parameter
+# seconds, so several TaskRuns can be kept running at the same time.
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: slow-check
+  namespace: starfleet
+spec:
+  params:
+    - name: seconds
+      type: string
+      default: "240"
+  steps:
+    - name: wait
+      image: busybox:1.37.0
+      script: |
+        #!/bin/sh
+        echo "waiting $(params.seconds) seconds"
+        sleep "$(params.seconds)"

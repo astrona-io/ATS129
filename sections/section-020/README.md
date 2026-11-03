@@ -22,7 +22,7 @@ You first install Tekton through the Operator with a single `TektonConfig`, read
 
 ## The learning path
 
-The section has two modules. Each has a landing page, short parts, a graded lab right after the part it tests, a summary and a knowledge check. Each module also has its own playground, a cluster where you can explore freely, and the landing page starts it for you.
+The section has three modules. Each has a landing page, short parts, a graded lab right after the part it tests, a summary and a knowledge check. Each module also has its own playground, a cluster where you can explore freely, and the landing page starts it for you.
 
 ### 1. Manage Tekton With The Operator And The Pruner
 
@@ -41,6 +41,16 @@ The second module goes deeper. The playground runs the Tekton Operator v0.81.2 a
 2. Set Pipelines Behaviour With spec.pipeline
 3. Reach Any ConfigMap And Deployment With Options, followed by the lab **Tune Tekton Pipelines Through The TektonConfig**
 4. Read The Status And Fix A Stuck Installation
+5. Summary
+
+### 3. Add Triggers And Plan An Operator Upgrade
+
+The third module changes an installation. The playground runs the Tekton Operator v0.81.2 and a `lite` `TektonConfig`.
+
+1. Add Triggers With The Profile
+2. Configure Triggers Through spec.trigger, followed by the lab **Add And Configure Tekton Triggers Through The TektonConfig**
+3. Plan An Operator Upgrade
+4. Verify An Upgrade And Recover
 5. Summary
 
 ## Section capstone: Repair Run Cleanup

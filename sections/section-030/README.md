@@ -21,7 +21,7 @@ This section connects Tekton to Prometheus. You first read the metrics the Tekto
 
 ## The learning path
 
-The section has two modules. Each has a landing page, short parts, a graded lab right after the part it tests, a summary and a knowledge check. Each module also has its own playground, a cluster where you can explore freely, and the landing page starts it for you.
+The section has three modules. Each has a landing page, short parts, a graded lab right after the part it tests, a summary and a knowledge check. Each module also has its own playground, a cluster where you can explore freely, and the landing page starts it for you.
 
 ### 1. Monitor Tekton With Prometheus
 
@@ -40,6 +40,16 @@ The second module goes deeper. The playground runs Tekton Pipelines v1.17.1, Cha
 2. Precompute Queries With Recording Rules
 3. Alert On Stuck And Slow Runs, followed by the lab **Record Failure Ratio And Alert On Stuck TaskRuns**
 4. Keep The Series Count Under Control
+5. Summary
+
+### 3. Route Tekton Alerts With Alertmanager
+
+The third module covers the other half of alerting. The playground runs Tekton Pipelines v1.17.1, Prometheus with two alerts and an Alertmanager with no routes.
+
+1. Read The Alertmanager Configuration
+2. Wire Prometheus To Alertmanager, followed by the lab **Route Tekton Alerts With Alertmanager**
+3. Define Rules As Kubernetes Objects (ServiceMonitor and PrometheusRule)
+4. Silence And Inhibit Alerts
 5. Summary
 
 ## Section capstone: Repair Tekton Monitoring

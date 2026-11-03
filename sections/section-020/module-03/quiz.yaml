@@ -1,0 +1,236 @@
+# Knowledge check for module 020-03. Listed in astrona.yaml as a `type: quiz` entry after the module summary.
+schema_version: 1
+kind: question_bank
+id: ats129-020-03
+course_id: ATS129
+exam_code: TEKTON
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: "section"
+  id: "section-020"
+  title: "Operate Tekton With The Operator And The Pruner"
+placement:
+  position: after
+  reading: sections/section-020/module-03/course-05-summary.md
+questions:
+- id: ats129-020-03-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Name the profiles"
+  source_readings:
+  - sections/section-020/module-03/course-01-add-triggers-with-the-profile.md
+  prompt: "Which profile installs Tekton Pipelines, Triggers and Chains but not the Dashboard?"
+  options:
+  - id: a
+    text: "`lite`"
+    explanation: "Not correct. `lite` has Pipelines only."
+  - id: b
+    text: "`basic`"
+    explanation: "Correct. `basic` is Pipelines, Triggers and Chains; `lite` is Pipelines only and `all` adds the Dashboard."
+  - id: c
+    text: "`all`"
+    explanation: "Not correct. `all` includes the Dashboard."
+  - id: d
+    text: "`triggers`"
+    explanation: "Not correct. There is no profile of that name."
+  correct_option: b
+  explanation: "Correct. `basic` is Pipelines, Triggers and Chains; `lite` is Pipelines only and `all` adds the Dashboard."
+- id: ats129-020-03-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Add Triggers"
+  source_readings:
+  - sections/section-020/module-03/course-01-add-triggers-with-the-profile.md
+  prompt: "What is the supported way to add Tekton Triggers to a `lite` installation?"
+  options:
+  - id: a
+    text: "Create a `TektonTrigger` resource by hand."
+    explanation: "Not correct. The Operator owns that resource and overwrites it."
+  - id: b
+    text: "Change `spec.profile` of the `TektonConfig` to `basic`."
+    explanation: "Correct. The Operator creates and owns the `TektonTrigger` resource from the profile."
+  - id: c
+    text: "Apply the Triggers release manifest with `kubectl apply`."
+    explanation: "Not correct. Components installed outside the Operator conflict with it."
+  - id: d
+    text: "Edit the Deployment `tekton-pipelines-controller`."
+    explanation: "Not correct. The Pipelines controller does not install Triggers."
+  correct_option: b
+  explanation: "Correct. The Operator creates and owns the `TektonTrigger` resource from the profile."
+- id: ats129-020-03-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Find the Triggers Deployments"
+  source_readings:
+  - sections/section-020/module-03/course-01-add-triggers-with-the-profile.md
+  prompt: "Which Deployment appears in `tekton-pipelines` after the profile changes to `basic`?"
+  options:
+  - id: a
+    text: "`tekton-triggers-controller`"
+    explanation: "Correct. The Triggers controller, webhook and core interceptors are installed with Triggers."
+  - id: b
+    text: "`tekton-dashboard`"
+    explanation: "Not correct. The Dashboard belongs to `all`."
+  - id: c
+    text: "`tekton-chains-controller`"
+    explanation: "Not correct. Chains is a separate component."
+  - id: d
+    text: "`tekton-pruner-controller`"
+    explanation: "Not correct. The Pruner is a separate component."
+  correct_option: a
+  explanation: "Correct. The Triggers controller, webhook and core interceptors are installed with Triggers."
+- id: ats129-020-03-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Place a Triggers property"
+  source_readings:
+  - sections/section-020/module-03/course-02-configure-triggers-through-spec-trigger.md
+  prompt: "Where in the `TektonConfig` do you set the default service account of EventListeners?"
+  options:
+  - id: a
+    text: "`spec.pipeline.default-service-account`"
+    explanation: "Not correct. `spec.pipeline` configures Pipelines."
+  - id: b
+    text: "`spec.trigger.default-service-account`"
+    explanation: "Correct. Triggers settings live under `spec.trigger`."
+  - id: c
+    text: "`spec.config.default-service-account`"
+    explanation: "Not correct. `spec.config` holds other settings, not Triggers defaults."
+  - id: d
+    text: "`spec.targetNamespace`"
+    explanation: "Not correct. The target namespace only chooses where components go."
+  correct_option: b
+  explanation: "Correct. Triggers settings live under `spec.trigger`."
+- id: ats129-020-03-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Follow a value to its ConfigMap"
+  source_readings:
+  - sections/section-020/module-03/course-02-configure-triggers-through-spec-trigger.md
+  prompt: "Which ConfigMap carries `spec.trigger.enable-api-fields`?"
+  options:
+  - id: a
+    text: "`feature-flags`"
+    explanation: "Not correct. `feature-flags` belongs to Pipelines."
+  - id: b
+    text: "`config-defaults-triggers`"
+    explanation: "Not correct. `config-defaults-triggers` carries defaults such as the service account."
+  - id: c
+    text: "`feature-flags-triggers`"
+    explanation: "Correct. The Triggers feature flags are in `feature-flags-triggers`."
+  - id: d
+    text: "`config-observability`"
+    explanation: "Not correct. `config-observability` configures metrics for Pipelines."
+  correct_option: c
+  explanation: "Correct. The Triggers feature flags are in `feature-flags-triggers`."
+- id: ats129-020-03-q06
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Predict a hand edit"
+  source_readings:
+  - sections/section-020/module-03/course-02-configure-triggers-through-spec-trigger.md
+  prompt: "You change a value in `config-defaults-triggers` with `kubectl patch`. What happens after a short time?"
+  options:
+  - id: a
+    text: "The Operator writes the value from the `TektonConfig` back."
+    explanation: "Correct. The `TektonConfig` is the source, and the Operator reconciles the ConfigMap to it."
+  - id: b
+    text: "The value stays, because ConfigMaps are the source."
+    explanation: "Not correct. The ConfigMap is a generated copy."
+  - id: c
+    text: "The Operator deletes the ConfigMap."
+    explanation: "Not correct. The Operator recreates and fixes, not deletes."
+  - id: d
+    text: "The TektonConfig is changed to match."
+    explanation: "Not correct. The reconcile goes from the TektonConfig to the ConfigMap."
+  correct_option: a
+  explanation: "Correct. The `TektonConfig` is the source, and the Operator reconciles the ConfigMap to it."
+- id: ats129-020-03-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Know what sets component versions"
+  source_readings:
+  - sections/section-020/module-03/course-03-plan-an-operator-upgrade.md
+  prompt: "What decides the version of Tekton Pipelines that the Operator installs?"
+  options:
+  - id: a
+    text: "The `spec.profile` value."
+    explanation: "Not correct. The profile chooses components, not versions."
+  - id: b
+    text: "The Operator release you applied."
+    explanation: "Correct. Each Operator release installs fixed component versions; v0.81.2 installs Pipelines v1.15.3."
+  - id: c
+    text: "The `starfleet` namespace."
+    explanation: "Not correct. Namespaces do not choose versions."
+  - id: d
+    text: "The `tkn` version."
+    explanation: "Not correct. `tkn` is only a client."
+  correct_option: b
+  explanation: "Correct. Each Operator release installs fixed component versions; v0.81.2 installs Pipelines v1.15.3."
+- id: ats129-020-03-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Save before upgrading"
+  source_readings:
+  - sections/section-020/module-03/course-03-plan-an-operator-upgrade.md
+  prompt: "Which object do you save first before an Operator upgrade?"
+  options:
+  - id: a
+    text: "The `TektonConfig`"
+    explanation: "Correct. The Operator rebuilds components from the `TektonConfig`, so it is the key object to keep."
+  - id: b
+    text: "The Operator pod"
+    explanation: "Not correct. Pods are recreated."
+  - id: c
+    text: "The `kube-system` namespace"
+    explanation: "Not correct. `kube-system` is not part of the Operator."
+  - id: d
+    text: "The kind node image"
+    explanation: "Not correct. The node image is not Tekton state."
+  correct_option: a
+  explanation: "Correct. The Operator rebuilds components from the `TektonConfig`, so it is the key object to keep."
+- id: ats129-020-03-q09
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Plan the way back"
+  source_readings:
+  - sections/section-020/module-03/course-04-verify-an-upgrade-and-recover.md
+  prompt: "Why is applying an older release a poor way back after a failed upgrade?"
+  options:
+  - id: a
+    text: "Newer releases may have changed stored objects and CRDs."
+    explanation: "Correct. A downgrade may meet objects that the older version does not understand, so plan a restore or rebuild."
+  - id: b
+    text: "Older releases cannot be downloaded."
+    explanation: "Not correct. Old release files stay available."
+  - id: c
+    text: "`kubectl apply` refuses older files."
+    explanation: "Not correct. `kubectl apply` accepts any valid manifest."
+  - id: d
+    text: "The profile is lost."
+    explanation: "Not correct. The profile is stored in the TektonConfig."
+  correct_option: a
+  explanation: "Correct. A downgrade may meet objects that the older version does not understand, so plan a restore or rebuild."
+- id: ats129-020-03-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Read a stuck upgrade"
+  source_readings:
+  - sections/section-020/module-03/course-04-verify-an-upgrade-and-recover.md
+  prompt: "The `TektonConfig` is not Ready after an upgrade. What do you read first?"
+  options:
+  - id: a
+    text: "The conditions of the `TektonConfig`, then of the component it names."
+    explanation: "Correct. The condition message names the blocking component, and its own conditions and the Operator log give the reason."
+  - id: b
+    text: "The `.spec.profile` only."
+    explanation: "Not correct. The profile does not explain a failed rollout."
+  - id: c
+    text: "The `tkn` version."
+    explanation: "Not correct. `tkn` is a client tool."
+  - id: d
+    text: "The EventListener logs."
+    explanation: "Not correct. EventListeners need Triggers to be installed first."
+  correct_option: a
+  explanation: "Correct. The condition message names the blocking component, and its own conditions and the Operator log give the reason."

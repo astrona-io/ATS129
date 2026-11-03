@@ -1,0 +1,32 @@
+# Reference Alertmanager config: warnings to platform-oncall, critical alerts to
+# pager, everything else to team-default.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+  namespace: monitoring
+data:
+  alertmanager.yml: |
+    route:
+      receiver: team-default
+      group_by: [alertname]
+      routes:
+        - matchers:
+            - severity="warning"
+          receiver: platform-oncall
+          group_by: [alertname]
+          group_wait: 10s
+          repeat_interval: 4h
+        - matchers:
+            - severity="critical"
+          receiver: pager
+          group_by: [alertname]
+          repeat_interval: 1h
+    receivers:
+      - name: team-default
+      - name: platform-oncall
+        webhook_configs:
+          - url: http://oncall.example.invalid/hook
+      - name: pager
+        webhook_configs:
+          - url: http://pager.example.invalid/hook

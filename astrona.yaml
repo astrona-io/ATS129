@@ -276,6 +276,47 @@ modules:
         pass_score: 70
 
       - type: reading
+        title: "Add Triggers And Plan An Operator Upgrade"
+        path: sections/section-020/module-03/course.md
+      - type: reading
+        title: "Add Triggers With The Profile"
+        path: sections/section-020/module-03/course-01-add-triggers-with-the-profile.md
+      - type: reading
+        title: "Configure Triggers Through spec.trigger"
+        path: sections/section-020/module-03/course-02-configure-triggers-through-spec-trigger.md
+      - type: reading
+        title: "Question"
+        path: sections/section-020/module-03/labs/lab-01/question.md
+      - type: lab
+        title: "Add And Configure Tekton Triggers Through The TektonConfig Lab"
+        path: sections/section-020/module-03/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 25m
+        topic: operations
+        task_kind: build
+        tags: [operator, tektonconfig, triggers, profiles]
+        learning_goals:
+          - Add Tekton Triggers by changing the profile to basic
+          - Set default-service-account and enable-api-fields through spec.trigger
+          - Prove the values in the Triggers ConfigMaps
+        resources:
+          - name: "TektonConfig"
+            url: https://tekton.dev/docs/operator/tektonconfig/
+      - type: reading
+        title: "Plan An Operator Upgrade"
+        path: sections/section-020/module-03/course-03-plan-an-operator-upgrade.md
+      - type: reading
+        title: "Verify An Upgrade And Recover"
+        path: sections/section-020/module-03/course-04-verify-an-upgrade-and-recover.md
+      - type: reading
+        title: "Summary"
+        path: sections/section-020/module-03/course-05-summary.md
+      - type: quiz
+        title: "Knowledge Check: Add Triggers And Plan An Operator Upgrade"
+        path: sections/section-020/module-03/quiz.yaml
+        pass_score: 70
+
+      - type: reading
         title: Question
         path: sections/section-020/capstone/labs/lab-01/question.md
       - type: lab
@@ -391,6 +432,47 @@ modules:
       - type: quiz
         title: "Knowledge Check: Query And Tune Tekton Metrics"
         path: sections/section-030/module-02/quiz.yaml
+        pass_score: 70
+
+      - type: reading
+        title: "Route Tekton Alerts With Alertmanager"
+        path: sections/section-030/module-03/course.md
+      - type: reading
+        title: "Read The Alertmanager Configuration"
+        path: sections/section-030/module-03/course-01-read-the-alertmanager-configuration.md
+      - type: reading
+        title: "Wire Prometheus To Alertmanager"
+        path: sections/section-030/module-03/course-02-wire-prometheus-to-alertmanager.md
+      - type: reading
+        title: "Question"
+        path: sections/section-030/module-03/labs/lab-01/question.md
+      - type: lab
+        title: "Route Tekton Alerts With Alertmanager Lab"
+        path: sections/section-030/module-03/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 25m
+        topic: monitoring
+        task_kind: build
+        tags: [alertmanager, routing, prometheus, amtool]
+        learning_goals:
+          - Route warning and critical alerts to different receivers
+          - Set grouping, group_wait and repeat_interval per route
+          - Prove the routing with amtool and a live alert
+        resources:
+          - name: "Alertmanager configuration"
+            url: https://prometheus.io/docs/alerting/latest/configuration/
+      - type: reading
+        title: "Define Rules As Kubernetes Objects"
+        path: sections/section-030/module-03/course-03-define-rules-as-kubernetes-objects.md
+      - type: reading
+        title: "Silence And Inhibit Alerts"
+        path: sections/section-030/module-03/course-04-silence-and-inhibit-alerts.md
+      - type: reading
+        title: "Summary"
+        path: sections/section-030/module-03/course-05-summary.md
+      - type: quiz
+        title: "Knowledge Check: Route Tekton Alerts With Alertmanager"
+        path: sections/section-030/module-03/quiz.yaml
         pass_score: 70
 
       - type: reading

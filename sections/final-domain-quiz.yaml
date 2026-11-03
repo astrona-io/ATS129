@@ -359,3 +359,91 @@ questions:
     explanation: "Not correct. `global` sets defaults."
   correct_option: b
   explanation: "Correct. `metric_relabel_configs` runs on each series after the scrape, where the metric name exists."
+- id: ats129-final-q16
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Pick the first matching route"
+  source_readings:
+  - sections/section-030/module-03/course-01-read-the-alertmanager-configuration.md
+  prompt: "Which route receives an alert when two sibling routes match its labels and neither has `continue: true`?"
+  options:
+  - id: a
+    text: "The first sibling in the list"
+    explanation: "Correct. The first matching child wins, and matching stops there."
+  - id: b
+    text: "The last sibling in the list"
+    explanation: "Not correct. Order matters, so the last one is not used."
+  - id: c
+    text: "Both siblings"
+    explanation: "Not correct. Only `continue: true` reaches the next sibling."
+  - id: d
+    text: "The root receiver"
+    explanation: "Not correct. The root receiver is the fallback when no child matches."
+  correct_option: a
+  explanation: "Correct. The first matching child wins, and matching stops there."
+- id: ats129-final-q17
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Know when Alertmanager gets an alert"
+  source_readings:
+  - sections/section-030/module-03/course-02-wire-prometheus-to-alertmanager.md
+  prompt: "When does Prometheus send an alert with `for: 1m` to Alertmanager?"
+  options:
+  - id: a
+    text: "As soon as the expression is true"
+    explanation: "Not correct. That would ignore the `for` time."
+  - id: b
+    text: "After the expression has been true for the whole `for` time"
+    explanation: "Correct. Pending alerts stay in Prometheus; firing alerts are sent."
+  - id: c
+    text: "Only after a silence is created"
+    explanation: "Not correct. Silences are created in Alertmanager by people or tools."
+  - id: d
+    text: "Every 4 hours"
+    explanation: "Not correct. Four hours is the default `repeat_interval`, a different setting."
+  correct_option: b
+  explanation: "Correct. Pending alerts stay in Prometheus; firing alerts are sent."
+- id: ats129-final-q18
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Add Triggers by profile"
+  source_readings:
+  - sections/section-020/module-03/course-01-add-triggers-with-the-profile.md
+  prompt: "How do you add Tekton Triggers to an Operator installation with the profile `lite`?"
+  options:
+  - id: a
+    text: "Change `spec.profile` to `basic`"
+    explanation: "Correct. The Operator creates and owns the `TektonTrigger` from the profile."
+  - id: b
+    text: "Create a `TektonTrigger` by hand"
+    explanation: "Not correct. The Operator owns that resource."
+  - id: c
+    text: "Edit the Pipelines controller Deployment"
+    explanation: "Not correct. The Pipelines controller does not install Triggers."
+  - id: d
+    text: "Delete the `TektonConfig`"
+    explanation: "Not correct. Deleting it removes the installation settings."
+  correct_option: a
+  explanation: "Correct. The Operator creates and owns the `TektonTrigger` from the profile."
+- id: ats129-final-q19
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Follow a Triggers setting"
+  source_readings:
+  - sections/section-020/module-03/course-02-configure-triggers-through-spec-trigger.md
+  prompt: "Which ConfigMap receives `spec.trigger.default-service-account`?"
+  options:
+  - id: a
+    text: "`config-defaults`"
+    explanation: "Not correct. `config-defaults` belongs to Pipelines."
+  - id: b
+    text: "`config-defaults-triggers`"
+    explanation: "Correct. Triggers defaults are written to `config-defaults-triggers`."
+  - id: c
+    text: "`feature-flags-triggers`"
+    explanation: "Not correct. `feature-flags-triggers` carries `enable-api-fields`."
+  - id: d
+    text: "`config-logging`"
+    explanation: "Not correct. `config-logging` holds log levels."
+  correct_option: b
+  explanation: "Correct. Triggers defaults are written to `config-defaults-triggers`."

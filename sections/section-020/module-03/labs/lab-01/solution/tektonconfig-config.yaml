@@ -1,0 +1,12 @@
+apiVersion: operator.tekton.dev/v1alpha1
+kind: TektonConfig
+metadata:
+  name: config
+spec:
+  profile: basic
+  targetNamespace: tekton-pipelines
+  pipeline:
+    enable-api-fields: beta
+  trigger:
+    enable-api-fields: alpha
+    default-service-account: triggers-sa

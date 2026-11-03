@@ -1,0 +1,59 @@
+# Route Tekton Alerts With Alertmanager
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-129-lab-030-03"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-tekton"
+      description: "Installs the tkn CLI 0.46.2 and Tekton Pipelines v1.17.1, and waits for Prometheus and the client pod"
+      type: "file"
+      source: "bootstrap/01-install-tekton.sh"
+    - name: "ats-129-lab-030-03-setup"
+      description: "Applies the Task slow-check and waits for Alertmanager"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+  manifests:
+    - name: "lab-start"
+      description: "The namespaces starfleet and monitoring, Prometheus (with two Tekton alerts), Alertmanager and the client pod"
+      type: "file"
+      source: "manifests/lab-start.yaml"
+testing:
+  init:
+    - name: "wait-for-tekton"
+      description: "Waits until Tekton and Prometheus are ready"
+      type: "file"
+      source: "testing/wait-for-tekton.sh"
+    - name: "reference-solution"
+      description: "The configuration a correct learner makes; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-routes"
+      description: "Confirms warning goes to platform-oncall, critical to pager and everything else to team-default"
+      type: "file"
+      source: "validation/validate-routes.sh"
+    - name: "validate-grouping"
+      description: "Confirms grouping by alertname and the wait and repeat times of the two routes"
+      type: "file"
+      source: "validation/validate-grouping.sh"
+    - name: "validate-alert-delivery"
+      description: "Starts three long TaskRuns and confirms the alert reaches Alertmanager for platform-oncall"
+      type: "file"
+      source: "validation/validate-alert-fires.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - busybox:1.37.0
+      - prom/prometheus:v3.15.1
+      - nicolaka/netshoot:v0.13
+      - quay.io/prometheus/alertmanager:v0.28.1

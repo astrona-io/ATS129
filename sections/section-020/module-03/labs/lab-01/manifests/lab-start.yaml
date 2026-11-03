@@ -1,0 +1,13 @@
+# Starting namespace for this ATS129 environment. Every Task and TaskRun of
+# the course runs in starfleet.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: starfleet
+---
+# The service account that EventListeners of this namespace should use by default.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: triggers-sa
+  namespace: starfleet

@@ -1,0 +1,236 @@
+# Knowledge check for module 030-03. Listed in astrona.yaml as a `type: quiz` entry after the module summary.
+schema_version: 1
+kind: question_bank
+id: ats129-030-03
+course_id: ATS129
+exam_code: TEKTON
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: "section"
+  id: "section-030"
+  title: "Monitor Tekton With Prometheus"
+placement:
+  position: after
+  reading: sections/section-030/module-03/course-05-summary.md
+questions:
+- id: ats129-030-03-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Say who decides the receiver"
+  source_readings:
+  - sections/section-030/module-03/course-01-read-the-alertmanager-configuration.md
+  prompt: "Which program decides which receiver gets an alert?"
+  options:
+  - id: a
+    text: "Prometheus, from the `receiver` key of the alerting rule."
+    explanation: "Not correct. An alerting rule has no receiver key; it only sets labels and annotations."
+  - id: b
+    text: "Alertmanager, from its route tree."
+    explanation: "Correct. Alertmanager walks the route tree with the labels of the alert and picks the receiver of the matching route."
+  - id: c
+    text: "The Tekton Pipelines controller."
+    explanation: "Not correct. Tekton only exposes metrics."
+  - id: d
+    text: "The client that reads `/api/v2/alerts`."
+    explanation: "Not correct. Reading the list does not change routing."
+  correct_option: b
+  explanation: "Correct. Alertmanager walks the route tree with the labels of the alert and picks the receiver of the matching route."
+- id: ats129-030-03-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Find the first matching route"
+  source_readings:
+  - sections/section-030/module-03/course-01-read-the-alertmanager-configuration.md
+  prompt: "A root route has two children in this order: `alertname=~\"Tekton.*\"` to `team-a`, then `severity=\"critical\"` to `pager`. Where does a critical alert named `TektonControllerDown` go?"
+  options:
+  - id: a
+    text: "`pager`"
+    explanation: "Not correct. `pager` matches too, but the first match already took the alert."
+  - id: b
+    text: "`team-a`"
+    explanation: "Correct. The first child whose matchers match wins, and neither child has `continue: true`."
+  - id: c
+    text: "Both receivers"
+    explanation: "Not correct. Only `continue: true` sends an alert on to the next sibling."
+  - id: d
+    text: "The root receiver"
+    explanation: "Not correct. The root receiver is only the fallback when no child matches."
+  correct_option: b
+  explanation: "Correct. The first child whose matchers match wins, and neither child has `continue: true`."
+- id: ats129-030-03-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Use continue"
+  source_readings:
+  - sections/section-030/module-03/course-01-read-the-alertmanager-configuration.md
+  prompt: "What does `continue: true` on a child route change?"
+  options:
+  - id: a
+    text: "The alert is also tried against the next sibling after it matched this child."
+    explanation: "Correct. Without `continue`, matching stops at the first child. With it, the next siblings are tried too, so one alert can reach two receivers."
+  - id: b
+    text: "The route is repeated every `repeat_interval`."
+    explanation: "Not correct. `repeat_interval` controls repetition."
+  - id: c
+    text: "The child inherits no settings from its parent."
+    explanation: "Not correct. Inheritance is not changed by `continue`."
+  - id: d
+    text: "Alertmanager keeps the alert after it resolves."
+    explanation: "Not correct. Resolving is decided by the alert from Prometheus."
+  correct_option: a
+  explanation: "Correct. Without `continue`, matching stops at the first child. With it, the next siblings are tried too, so one alert can reach two receivers."
+- id: ats129-030-03-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Tell the three clocks apart"
+  source_readings:
+  - sections/section-030/module-03/course-01-read-the-alertmanager-configuration.md
+  prompt: "Which setting delays the first notification of a new group so related alerts can join it?"
+  options:
+  - id: a
+    text: "`repeat_interval`"
+    explanation: "Not correct. `repeat_interval` repeats an unchanged group that already notified."
+  - id: b
+    text: "`group_interval`"
+    explanation: "Not correct. `group_interval` spaces later news about a group that already notified."
+  - id: c
+    text: "`group_wait`"
+    explanation: "Correct. `group_wait` is the time Alertmanager waits after the first alert of a new group before it sends."
+  - id: d
+    text: "`for`"
+    explanation: "Not correct. `for` is a Prometheus rule setting."
+  correct_option: c
+  explanation: "Correct. `group_wait` is the time Alertmanager waits after the first alert of a new group before it sends."
+- id: ats129-030-03-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Test routing without an alert"
+  source_readings:
+  - sections/section-030/module-03/course-01-read-the-alertmanager-configuration.md
+  prompt: "Which command shows the receiver that the labels `severity=critical` reach, without a live alert?"
+  options:
+  - id: a
+    text: "`amtool config routes test severity=critical`"
+    explanation: "Correct. `config routes test` walks the loaded route tree with the labels you give and prints the receiver."
+  - id: b
+    text: "`amtool silence add severity=critical`"
+    explanation: "Not correct. `silence add` creates a mute and tests nothing."
+  - id: c
+    text: "`amtool check-config severity=critical`"
+    explanation: "Not correct. `check-config` takes a file and checks its syntax."
+  - id: d
+    text: "`kubectl describe alertmanager`"
+    explanation: "Not correct. There is no Alertmanager object in this setup, and it would not test labels."
+  correct_option: a
+  explanation: "Correct. `config routes test` walks the loaded route tree with the labels you give and prints the receiver."
+- id: ats129-030-03-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Wire the link"
+  source_readings:
+  - sections/section-030/module-03/course-02-wire-prometheus-to-alertmanager.md
+  prompt: "Where does `prometheus.yml` say which Alertmanager receives alerts?"
+  options:
+  - id: a
+    text: "`scrape_configs`"
+    explanation: "Not correct. `scrape_configs` lists targets to pull metrics from."
+  - id: b
+    text: "`rule_files`"
+    explanation: "Not correct. `rule_files` lists rule files to load."
+  - id: c
+    text: "`alerting.alertmanagers`"
+    explanation: "Correct. The `alerting` block lists the Alertmanager targets that Prometheus pushes alerts to."
+  - id: d
+    text: "`global.external_labels`"
+    explanation: "Not correct. `external_labels` adds labels to alerts and data; it names no target."
+  correct_option: c
+  explanation: "Correct. The `alerting` block lists the Alertmanager targets that Prometheus pushes alerts to."
+- id: ats129-030-03-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Know when an alert is sent"
+  source_readings:
+  - sections/section-030/module-03/course-02-wire-prometheus-to-alertmanager.md
+  prompt: "An alert has `for: 1m`. The expression has been true for 30 seconds. What does Alertmanager hold?"
+  options:
+  - id: a
+    text: "The alert as `firing`."
+    explanation: "Not correct. `firing` needs the full `for` time."
+  - id: b
+    text: "The alert as `pending`."
+    explanation: "Not correct. Alertmanager has no pending state for alerts that it never received."
+  - id: c
+    text: "Nothing: Prometheus sends only firing alerts."
+    explanation: "Correct. A pending alert stays in Prometheus. It is sent to Alertmanager only after the `for` time has passed and it is firing."
+  - id: d
+    text: "A silence for the alert."
+    explanation: "Not correct. Silences are created by people or tools."
+  correct_option: c
+  explanation: "Correct. A pending alert stays in Prometheus. It is sent to Alertmanager only after the `for` time has passed and it is firing."
+- id: ats129-030-03-q08
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Debug a missing notification"
+  source_readings:
+  - sections/section-030/module-03/course-02-wire-prometheus-to-alertmanager.md
+  prompt: "An alert is `firing` in Prometheus, but `/api/v2/alerts` on Alertmanager does not list it. What should you check first?"
+  options:
+  - id: a
+    text: "`/api/v1/alertmanagers` on Prometheus for an active instance."
+    explanation: "Correct. If Alertmanager does not hold the alert, the link is broken, and the list of active instances shows it. Routing, URLs and inhibition come after the alert arrived."
+  - id: b
+    text: "`repeat_interval` of the route."
+    explanation: "Not correct. Routing decides what happens to an alert Alertmanager already holds."
+  - id: c
+    text: "The webhook URL of the receiver."
+    explanation: "Not correct. A bad webhook URL fails the delivery, but the alert is still listed."
+  - id: d
+    text: "The `inhibit_rules` list."
+    explanation: "Not correct. An inhibited alert is still listed with the status `suppressed`."
+  correct_option: a
+  explanation: "Correct. If Alertmanager does not hold the alert, the link is broken, and the list of active instances shows it. Routing, URLs and inhibition come after the alert arrived."
+- id: ats129-030-03-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Name the ServiceMonitor port"
+  source_readings:
+  - sections/section-030/module-03/course-03-define-rules-as-kubernetes-objects.md
+  prompt: "What goes in `endpoints[].port` of a ServiceMonitor?"
+  options:
+  - id: a
+    text: "The number of the container port."
+    explanation: "Not correct. Container port numbers are not used there."
+  - id: b
+    text: "The name of a port of the Service."
+    explanation: "Correct. The field takes the name of the Service port, for example `http-metrics`. A number belongs in `targetPort`."
+  - id: c
+    text: "The name of the Pod."
+    explanation: "Not correct. Pods are selected through the Service."
+  - id: d
+    text: "The path `/metrics`."
+    explanation: "Not correct. The metrics path is set in a separate `path` field."
+  correct_option: b
+  explanation: "Correct. The field takes the name of the Service port, for example `http-metrics`. A number belongs in `targetPort`."
+- id: ats129-030-03-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Choose silence or inhibition"
+  source_readings:
+  - sections/section-030/module-03/course-04-silence-and-inhibit-alerts.md
+  prompt: "A known upgrade will fire alerts for one hour on one day. What is the right tool?"
+  options:
+  - id: a
+    text: "An inhibition rule with no `equal` labels."
+    explanation: "Not correct. An inhibition rule applies all the time and, without `equal`, hides alerts everywhere."
+  - id: b
+    text: "A silence with matchers, an end time and a comment."
+    explanation: "Correct. A silence mutes matching alerts for a chosen time and expires by itself."
+  - id: c
+    text: "A route with `repeat_interval: 1h`."
+    explanation: "Not correct. A longer repeat interval still sends the first message."
+  - id: d
+    text: "Deleting the alert rule in Prometheus."
+    explanation: "Not correct. The rule is correct and is needed after the upgrade."
+  correct_option: b
+  explanation: "Correct. A silence mutes matching alerts for a chosen time and expires by itself."
