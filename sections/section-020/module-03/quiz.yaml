@@ -4,7 +4,7 @@ kind: question_bank
 id: ats129-020-03
 course_id: ATS129
 exam_code: TEKTON
-status: draft
+status: alpha
 provenance: Original practice material written for this course; not official exam questions.
 scope:
   type: "section"

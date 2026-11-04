@@ -13,7 +13,7 @@
 training:
   id: ATS129
   title: "Tekton: Supply Chain Security With Chains & Operations"
-  maturity: draft
+  maturity: alpha
   description: >
     Training material covering the Supply Chain Security With Chains &
     Operations domain of the Tekton training path: Tekton Chains for signed
