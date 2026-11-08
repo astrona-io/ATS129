@@ -1,12 +1,13 @@
 # Course manifest for ATS129 - Supply Chain Security With Chains & Operations (Tekton).
 #
-# One entry per section under `modules:`. Each section lists, in order: its
-# README, then for each module the landing page (course.md), its parts
-# (course-0N-*.md), and right after the part a lab tests, the lab's
-# question.md reading and the `type: lab` entry. The module's summary page
-# comes last. The section capstone closes the section. Playgrounds are not
-# listed: the landing page's playground marker shows them. solution.md is
-# never listed.
+# One entry per module under `modules:`, in section order. A module lists,
+# in order: the section README when it opens a section, its landing page
+# (course.md), its parts (course-0N-*.md), and right after the part a lab
+# tests, the lab's question.md reading and the `type: lab` entry. The
+# module's summary page and knowledge check come last. The last module of a
+# section also carries the section capstone and the section knowledge check.
+# Playgrounds are not listed: the playground marker on the landing page shows
+# them. solution.md is never listed.
 #
 # Every `path:` is relative to this file.
 
@@ -59,15 +60,13 @@ modules:
         title: "How This Course Is Made"
         path: sections/intro/course-03-how-this-course-is-made.md
 
-  - id: module-010
-    title: "Sign And Attest Builds With Tekton Chains"
+  - id: module-010-01
+    title: "Signed Provenance With Tekton Chains"
     description: >
-      How Tekton Chains formats, signs and stores provenance for finished
-      runs, the cosign key in signing-secrets, chains-config formats, storage
-      and signers, type hinting with IMAGE_URL and IMAGE_DIGEST, signatures
-      and SLSA attestations in an OCI registry verified with cosign, keyless
-      signing with Fulcio, the Rekor transparency log, and the failures that
-      leave a run marked as signed with nothing behind it.
+      Module 1 of 2 in Sign And Attest Builds With Tekton Chains. Parts: How
+      Tekton Chains Works; Sign Images And Store Attestations In A Registry;
+      Keyless Signing, Transparency Logs And Quiet Failures. Graded lab: Sign
+      Built Images With Tekton Chains. Opens with the section overview.
 
     content:
       - type: reading
@@ -112,6 +111,17 @@ modules:
         title: Summary
         path: sections/section-010/module-01/course-04-summary.md
 
+  - id: module-010-02
+    title: "Provenance Formats, Storage Backends And Signers"
+    description: >
+      Module 2 of 2 in Sign And Attest Builds With Tekton Chains. Parts: Pick
+      A Provenance Format; Choose Where Chains Stores Provenance; Provenance
+      For PipelineRuns And Images; Signers, Keys And Offline Verification.
+      Graded lab: Choose Chains Provenance Format And Storage. Ends with a
+      knowledge check. Closes the section with its capstone lab and section
+      knowledge check.
+
+    content:
       - type: reading
         title: "Provenance Formats, Storage Backends And Signers"
         path: sections/section-010/module-02/course.md
@@ -182,14 +192,14 @@ modules:
         path: sections/section-010/quiz.yaml
         pass_score: 70
 
-  - id: module-020
-    title: "Operate Tekton With The Operator And The Pruner"
+  - id: module-020-01
+    title: "Manage Tekton With The Operator And The Pruner"
     description: >
-      Installing, configuring and upgrading Tekton with the Tekton Operator
-      and a TektonConfig, the job-based and the event-based pruner,
-      history-based pruning with successfulHistoryLimit, failedHistoryLimit
-      and historyLimit, time-based pruning with ttlSecondsAfterFinished, and
-      namespace rules with enforcedConfigLevel and tekton-pruner-namespace-spec.
+      Module 1 of 3 in Operate Tekton With The Operator And The Pruner. Parts:
+      Install And Configure Tekton With The Operator; Keep A Fixed Number Of
+      Runs With History Limits; Delete Old Runs With TTLs And Namespace
+      Settings. Graded lab: Configure Time-Based And History-Based Pruning.
+      Opens with the section overview.
 
     content:
       - type: reading
@@ -232,6 +242,16 @@ modules:
         title: Summary
         path: sections/section-020/module-01/course-04-summary.md
 
+  - id: module-020-02
+    title: "Configure Tekton Components Through TektonConfig"
+    description: >
+      Module 2 of 3 in Operate Tekton With The Operator And The Pruner. Parts:
+      Choose Profiles And Components; Set Pipelines Behaviour With
+      spec.pipeline; Reach Any ConfigMap And Deployment With Options; Read The
+      Status And Fix A Stuck Installation. Graded lab: Tune Tekton Pipelines
+      Through The TektonConfig. Ends with a knowledge check.
+
+    content:
       - type: reading
         title: "Configure Tekton Components Through TektonConfig"
         path: sections/section-020/module-02/course.md
@@ -275,6 +295,17 @@ modules:
         path: sections/section-020/module-02/quiz.yaml
         pass_score: 70
 
+  - id: module-020-03
+    title: "Add Triggers And Plan An Operator Upgrade"
+    description: >
+      Module 3 of 3 in Operate Tekton With The Operator And The Pruner. Parts:
+      Add Triggers With The Profile; Configure Triggers Through spec.trigger;
+      Plan An Operator Upgrade; Verify An Upgrade And Recover. Graded lab: Add
+      And Configure Tekton Triggers Through The TektonConfig. Ends with a
+      knowledge check. Closes the section with its capstone lab and section
+      knowledge check.
+
+    content:
       - type: reading
         title: "Add Triggers And Plan An Operator Upgrade"
         path: sections/section-020/module-03/course.md
@@ -343,12 +374,13 @@ modules:
         path: sections/section-020/quiz.yaml
         pass_score: 70
 
-  - id: module-030
+  - id: module-030-01
     title: "Monitor Tekton With Prometheus"
     description: >
-      The metrics of the Tekton Pipelines controller and config-observability,
-      scraping the controller with Prometheus, PromQL queries for failures,
-      load and duration, and alerting rules that fire when TaskRuns fail.
+      Module 1 of 3 in Monitor Tekton With Prometheus. Parts: The Metrics
+      Tekton Exposes; Scrape Tekton With Prometheus; Alert On Failed TaskRuns.
+      Graded lab: Scrape Tekton And Alert On Failed TaskRuns. Opens with the
+      section overview.
 
     content:
       - type: reading
@@ -391,6 +423,16 @@ modules:
         title: Summary
         path: sections/section-030/module-01/course-04-summary.md
 
+  - id: module-030-02
+    title: "Query And Tune Tekton Metrics"
+    description: >
+      Module 2 of 3 in Monitor Tekton With Prometheus. Parts: Scrape The Other
+      Tekton Components; Precompute Queries With Recording Rules; Alert On
+      Stuck And Slow Runs; Keep The Series Count Under Control. Graded lab:
+      Record Failure Ratio And Alert On Stuck TaskRuns. Ends with a knowledge
+      check.
+
+    content:
       - type: reading
         title: "Query And Tune Tekton Metrics"
         path: sections/section-030/module-02/course.md
@@ -434,6 +476,16 @@ modules:
         path: sections/section-030/module-02/quiz.yaml
         pass_score: 70
 
+  - id: module-030-03
+    title: "Route Tekton Alerts With Alertmanager"
+    description: >
+      Module 3 of 3 in Monitor Tekton With Prometheus. Parts: Read The
+      Alertmanager Configuration; Wire Prometheus To Alertmanager; Define
+      Rules As Kubernetes Objects; Silence And Inhibit Alerts. Graded lab:
+      Route Tekton Alerts With Alertmanager. Ends with a knowledge check.
+      Closes the section with its capstone lab and section knowledge check.
+
+    content:
       - type: reading
         title: "Route Tekton Alerts With Alertmanager"
         path: sections/section-030/module-03/course.md
